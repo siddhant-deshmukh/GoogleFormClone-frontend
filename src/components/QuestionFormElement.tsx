@@ -143,6 +143,7 @@ const QuestionFormElement = ({queKey,question,editQuestion}:{queKey:number,quest
                     <input 
                       value = {option}
                       onChange = { (event)=>{
+                        //@ts-ignore
                         const arr_ = [...question.ansOption]
                         arr_[index] = event.target.value
                         editQuestion(queKey,{...question,ansOption:arr_})
@@ -153,6 +154,7 @@ const QuestionFormElement = ({queKey,question,editQuestion}:{queKey:number,quest
                     className='w-fit text-sm  px-2 py-1 rounded-full hover:bg-gray-100'
                     onClick={(event)=>{
                       event.preventDefault();
+                      //@ts-ignore
                       const arr_ =  [...question.ansOption]
                       const newarr_ = [...arr_.slice(0,index) , ...arr_.slice(index+1,arr_.length+1)]
                       editQuestion(queKey,{...question,ansOption:newarr_})
@@ -167,6 +169,7 @@ const QuestionFormElement = ({queKey,question,editQuestion}:{queKey:number,quest
                 event.preventDefault(); 
                 //@ts-ignore
                 console.log(question.ansOption)
+                //@ts-ignore
                 const newOptions = (question.ansOption && typeof question.ansOption !=='string')?[...question.ansOption,`Option ${question.ansOption.length + 1}`]:['Option 1'];
                 console.log(newOptions , question.ansOption)
                 editQuestion(queKey,{...question,ansOption:newOptions})}}

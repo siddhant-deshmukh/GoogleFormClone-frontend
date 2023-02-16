@@ -5,7 +5,7 @@ export interface IFormContext {
 }
 
 export const FormContext = createContext<IFormContext | null>(null);
-
+//@ts-ignore
 export const FormProvider = (props) => {
 
     return(
