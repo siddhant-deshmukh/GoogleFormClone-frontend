@@ -1,10 +1,11 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
+import { IUser } from '../types'
 
-export const Home = () => {
+export const Home = ({userInfo}:{userInfo:IUser}) => {
   return (
     <div className='fixed w-screen h-screen left-0 top-0'>
-        <NavBar />
+        <NavBar userInfo={userInfo}/>
         <main className='w-full'>
         <div className='w-full bg-gray-100 py-2  px-5 flex'>
             <div className='mx-auto w-full xl:w-4/6'>

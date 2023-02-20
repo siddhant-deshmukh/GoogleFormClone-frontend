@@ -15,7 +15,7 @@ const GithubLandingPage = () => {
     axios.get(`${import.meta.env.VITE_API_URL}/login-github?code=${code}`,{withCredentials:true})
       .then((value)=>{
         console.log("Response from login github",value)
-        navigate('/')
+        window.location.href= `${import.meta.env.BASE_URL}`
       })
       .catch((err)=>{
         setErrorMsg(JSON.stringify(err))

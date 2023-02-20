@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import { Link,  useNavigate } from 'react-router-dom';
+import { IUser } from '../types';
 
-const NavBar = () => {
+const NavBar = ({userInfo}:{userInfo:IUser}) => {
   const [dropdownToggle,setToggle] = useState<boolean>(true)
   const navigate = useNavigate()
   return (
@@ -31,8 +32,8 @@ const NavBar = () => {
           </button>
           <div id="dropdownAvatar" hidden={dropdownToggle} className="absolute z-10 top-10 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
             <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-              <div>Bonnie Green</div>
-              <div className="font-medium truncate">name@flowbite.com</div>
+              <div>{userInfo.name}</div>
+              {userInfo.email && <div className="font-medium truncate text-xs text-gray-500">{userInfo.email}</div>}
             </div>
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
               <li>
@@ -54,7 +55,8 @@ const NavBar = () => {
                     .then((res)=>{
                       if(res.data){
                         console.log("LOgout",res)
-                        navigate('/')
+                        window.location.href= `${import.meta.env.BASE_URL}`
+
                       }
                     })
                 }}

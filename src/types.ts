@@ -27,6 +27,7 @@ export interface IUser extends IUserSnippet{
     _id : Types.ObjectId,
     forms : Types.ObjectId[],
     auth_type : string[],
+    email? :string,
 }
 export interface IUserStored extends IUser{
     email : string,

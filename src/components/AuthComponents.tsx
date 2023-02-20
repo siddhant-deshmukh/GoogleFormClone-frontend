@@ -7,7 +7,8 @@ const LoginComponent = ({authTypeToggle}:{authTypeToggle : 'login' | 'register'}
   // const [authTypeToggle, setAuthTypeToggle] = useState<'login' | 'register'>('login')
   const location = useLocation();
   const [formState, setFormState] = useState<{ email: string, name?: string, password: string }>({ email: '', name: '', password: '' })
-  
+  const navigate = useNavigate()
+
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault()
     setFormState((prev) => {
@@ -27,7 +28,10 @@ const LoginComponent = ({authTypeToggle}:{authTypeToggle : 'login' | 'register'}
         },
         body:JSON.stringify({code})
       }).then((res)=>res.json())
-      .then((data)=>console.log(data))
+      .then((data)=>{
+        console.log(data)
+        window.location.href= `${import.meta.env.BASE_URL}`
+      })
       .catch((err)=>console.error("Error after onSucess callback ",err))
     },
     onError : (res)=>{console.error("error while login",res)} ,
