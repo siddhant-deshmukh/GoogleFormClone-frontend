@@ -9,14 +9,19 @@ export interface IGridAns {
 }
 
 export interface IQuestionForm {
-    title : string,
-    desc? : string,
-    required : boolean,
-    type : IAnsTypes,
-    ansOption? : ITextAns | IMultipleChoicesAns | IGridAns
+    _id? : string,
+    formId?: string,
+    required: boolean,
+    title: string,
+    desc?: string,
+    ans_type: 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown', // | 'mcq_grid' | 'checkboc_grid' | 'range' | 'date' | 'time',
+    optionsArray?: string[],
+    correct_ans?: string[],
+    point?:number,
+    savedChanges?:boolean,
 }
 export interface IAllFormQuestions {
-    [id : number] : IQuestionForm
+    [id : string] : IQuestionForm
 }
 
 export interface IUserSnippet {
@@ -33,3 +38,18 @@ export interface IUserStored extends IUser{
     email : string,
     password? : string,
 } 
+export interface IForm {
+    author: Types.ObjectId,
+    title: string,
+    desc?: string,
+    starttime?: Date,
+    endtime?: Date,
+    questions: Types.ObjectId[]
+}
+export interface IFormSnippet {
+    _id : Types.ObjectId,
+    title: string,
+    desc?: string,
+    starttime?: Date,
+    endtime?: Date,
+}

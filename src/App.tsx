@@ -46,7 +46,6 @@ function App() {
       return (
         <div className='fixed w-screen h-screen left-0 top-0 flex items-center'>
           <div className='mx-auto'>
-            {JSON.stringify(userInfo)}
             <GoogleOAuthProvider clientId={import.meta.env.VITE_GoogleClientId}>
               <Routes>
                 <Route path="/" element={<LoginComponent authTypeToggle={'login'}/>} />
@@ -62,9 +61,11 @@ function App() {
     }else{
       return (
         <Routes>
-          <Route path="/" element={<Home userInfo={userInfo}/>} />
+          <Route path="/" element={<Home userInfo={userInfo} setUserInfo={setUserInfo}/>} />
           <Route path="/demo" element={<EditForm/>} />
-          <Route path="*" element={<Home userInfo={userInfo}/>} />
+          <Route path="/form/:formId/edit" element={<EditForm/>} />
+          <Route path="/form/:formId/preview" element={<EditForm/>} />
+          <Route path="*" element={<Home userInfo={userInfo} setUserInfo={setUserInfo}/>} />
         </Routes>
       )
     }
