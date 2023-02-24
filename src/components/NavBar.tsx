@@ -7,7 +7,7 @@ const NavBar = ({userInfo}:{userInfo?:IUser}) => {
   const [dropdownToggle,setToggle] = useState<boolean>(true)
   const navigate = useNavigate()
   return (
-    <header className='flex  px-5 py-2 bg-white border-b border-b-gray-200 items-center w-full justify-between'>
+    <header className='flex  px-5 py-2 bg-white  items-center w-full justify-between'>
       <div className='w-fit flex items-center space-x-3'>
         <img src={'/googleForm.png'} className="w-6 h-8" />
         <span className='font-bold text-lg text-gray-500'>Form</span>

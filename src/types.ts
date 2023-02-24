@@ -7,7 +7,6 @@ export interface IGridAns {
     row : string[],
     col : string[]
 }
-
 export interface IQuestionForm {
     _id? : string,
     formId?: string,
@@ -53,3 +52,15 @@ export interface IFormSnippet {
     starttime?: Date,
     endtime?: Date,
 }
+
+export interface IRes_b {
+    userId : Types.ObjectId,
+    formId : Types.ObjectId,
+    mcq_res? : Map<string,string[]>,
+    text_res? : Map<string,string>,
+    result? : number
+}
+export type IQueResList = Map<string, {
+    ans_type :  'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown',
+    response : string[] | string 
+}>

@@ -1,11 +1,13 @@
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormCard from '../components/FormCard'
 import NavBar from '../components/NavBar'
 import { IFormSnippet, IUser } from '../types'
 
 export const Home = ({ userInfo,setUserInfo  }: { userInfo: IUser,setUserInfo: React.Dispatch<React.SetStateAction<IUser | null>> }) => {
   const [warnMsg,setWarnMsg] = useState<string | undefined>(undefined)
+  const navigate = useNavigate()
 
   const createNewForm = useCallback(()=>{
     if(userInfo.forms.length >= 10){
@@ -35,6 +37,7 @@ export const Home = ({ userInfo,setUserInfo  }: { userInfo: IUser,setUserInfo: R
           }
         })
       }
+      navigate(`/form/${data.formId}/edit`)
       console.log(value)
     }).catch((err)=>{
       setWarnMsg('Some error occured while creating form!')

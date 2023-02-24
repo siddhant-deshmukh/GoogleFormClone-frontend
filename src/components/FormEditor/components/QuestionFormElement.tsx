@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { IAnsTypes, IQuestionForm } from '../types'
+import { IAnsTypes, IQuestionForm } from '../../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
 
@@ -174,15 +174,15 @@ const QuestionFormElement =
           <div className=''>
             {question.title}
             {
-                question._id && question._id.slice(0,3) === 'new'  &&
+                question._id?.slice(0,3) === 'new'  &&
               <span style={{fontSize:'12px'}} className="bg-blue-100 text-blue-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">new</span>
             }
             {
-               question._id && question._id.slice(0,3) !== 'new' &&  question.savedChanges &&
+               question._id?.slice(0,3) !== 'new' &&  question.savedChanges &&
               <span style={{fontSize:'12px'}} className="bg-gray-100 text-gray-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">saved</span>
             }
             {
-               question._id && question._id.slice(0,3) !== 'new' &&  (!question.savedChanges) && 
+               question._id?.slice(0,3) !== 'new' &&  (!question.savedChanges) && 
               <span style={{fontSize:'12px'}} className="bg-red-100 text-red-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">unsaved</span>
             }
           </div>
@@ -276,8 +276,8 @@ const QuestionFormElement =
             </div>
             {/* save changes */}
             <button 
-              disabled={!question._id || (question._id.slice(0,3) === 'new') || (question.savedChanges)}
-              className={`w-28  hidden sm:block ${(!question._id || (question._id.slice(0,3) === 'new') || (question.savedChanges))?"bg-blue-100 text-gray-600":"bg-blue-500 text-white"} rounded-md p-2 text-xs `}
+              disabled={(question._id?.slice(0,3) === 'new') || (question.savedChanges)}
+              className={`w-28  hidden sm:block ${((question._id?.slice(0,3) === 'new') || (question.savedChanges))?"bg-blue-100 text-gray-600":"bg-blue-500 text-white"} rounded-md p-2 text-xs `}
               onClick={(event)=>{
                 event.preventDefault(); 
                 setLoading(true);
@@ -290,8 +290,8 @@ const QuestionFormElement =
           </div>
           {/*  This will only show up in sm mode to save changes */}
           <button 
-            disabled={!question._id || (question._id.slice(0,3) === 'new') || (question.savedChanges)}
-            className={`w-fit ml-auto mt-3 block sm:hidden ${(!question._id || (question._id.slice(0,3) === 'new') || (question.savedChanges))?"bg-blue-100 text-gray-600":"bg-blue-500 text-white"} rounded-md p-2 text-xs `}
+            disabled={(question._id?.slice(0,3) === 'new') || (question.savedChanges)}
+            className={`w-fit ml-auto mt-3 block sm:hidden ${((question._id?.slice(0,3) === 'new') || (question.savedChanges))?"bg-blue-100 text-gray-600":"bg-blue-500 text-white"} rounded-md p-2 text-xs `}
             onClick={(event)=>{event.preventDefault(); setLoading(true); saveQuestion(queKey.toString(),question)}}
             >
               {saveChangesLoading && <svg  aria-hidden="true" role="status" className="inline w-4 h-4 mr-3 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
