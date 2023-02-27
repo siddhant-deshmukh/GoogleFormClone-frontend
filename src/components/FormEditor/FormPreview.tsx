@@ -1,6 +1,7 @@
 import { Types } from 'mongoose'
 import React, { useEffect, useState } from 'react'
-import { IAllFormQuestions, IQueResList } from '../../types'
+import { IAllFormQuestions, IQueResList, IQuestionForm } from '../../types'
+import QuestionElement from './components/QuestionElement'
 import TitleDescFormElement from './components/TitleDescFormElement'
 
 const defalutQueResList = new Map()
@@ -13,58 +14,62 @@ function FormPreview(
     allQuestions: IAllFormQuestions | null,
   }
 ) {
-  const [quesResList,setQueResList] = useState<IQueResList>(defalutQueResList)
-  useEffect(()=>{ 
-    let new_queResList : IQueResList = new Map()
-    if(!queSeq || !allQuestions) return 
-    queSeq.forEach((qId)=>{
-      const {ans_type} = allQuestions[qId.toString()]
-
-      new_queResList.set(qId as string,{
-        ans_type,
-        response : (ans_type === "dropdown" || ans_type === "checkbox" || ans_type === "mcq")?[]:""
-      })
+  const [quesReses, setQueReses] = useState<IQueResList>(defalutQueResList)
+  const changeRes = (queKey: string, response: string[] | string) => {
+    
+    setQueReses(prev => {
+      const new_ = new Map(prev)
+      new_.set(queKey, response)
+      // console.log(new_)
+      return new_
     })
-  },[])
+  }
+  useEffect(() => {
+    let new_queResList: IQueResList = new Map()
+    if (!allQuestions) return
+    queSeq.forEach((qId) => {
+      const { ans_type } = allQuestions[qId.toString()]
+
+      new_queResList.set(
+        qId as string,
+        (ans_type === "dropdown" || ans_type === "checkbox" || ans_type === "mcq") ? [] : ""
+      )
+    })
+    // console.log({new_queResList})
+    setQueReses(new_queResList)
+  }, [queSeq,allQuestions])
 
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full '>
         <TitleDescFormElement />
-        <div id='sortable' className='flex flex-col  my-3 space-y-2 w-full '>
+        <div 
+          id='sortable' 
+          className='flex flex-col  my-3 space-y-2 w-full '
+          >
           {allQuestions && queSeq &&
-            queSeq.map((ele) => {
-              let question=allQuestions[ele.toString()]
+            queSeq.map((queKey) => {
+              let question = allQuestions[queKey.toString()]
+              let queRes = quesReses.get(queKey.toString())
+              if (!queKey || queRes === null || queRes === undefined) return;
               return (
-                // <QuestionElement
-                //   key={ele.toString()}
-                //   queKey={ele}
-                //   question={allQuestions[ele.toString()]}
-                // />
-                <div
-                  key={ele.toString()}
-                  className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg `}
-                >
-                  <h3
-                    className='py-3 pl-3 font-normal text-sm w-full bg-gray-100 border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 '
-                  >
-                    {question.title}
-                  </h3>
-
-                </div>
+                <>
+                  <QuestionElement key={queKey.toString()} queKey={queKey.toString()}
+                    question={question} queRes={queRes} changeRes={changeRes} />
+                </>
               )
             })
           }
 
           <button
+            type={'submit'}
             className='px-3 py-1 bg-purple-200'
-            onClick={(event) => { event.preventDefault();  }}>
+            onClick={(event)=>{event.preventDefault(); console.log(quesReses)}}
+            >
             Submit
           </button>
         </div>
-        {
-          JSON.stringify(allQuestions)
-        }
+        
       </div>
 
     </div>

@@ -6,6 +6,7 @@ import { IUser } from './types';
 import { Route, Routes } from 'react-router-dom';
 import GithubLandingPage from './routes/GithubLandingPage';
 import { Home } from './routes/Home';
+import SubmitForm from './routes/SubmitForm';
 
 function App() {
 
@@ -62,6 +63,7 @@ function App() {
           <Route path="/demo" element={<EditForm/>} />
           <Route path="/form/:formId/edit" element={<EditForm/>} />
           <Route path="/form/:formId/preview" element={<EditForm/>} />
+          <Route path="/form/:formId" element={<SubmitForm/>} />
           <Route path="*" element={<Home userInfo={userInfo} setUserInfo={setUserInfo}/>} />
         </Routes>
       )

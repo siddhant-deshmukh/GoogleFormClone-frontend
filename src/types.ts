@@ -60,7 +60,4 @@ export interface IRes_b {
     text_res? : Map<string,string>,
     result? : number
 }
-export type IQueResList = Map<string, {
-    ans_type :  'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown',
-    response : string[] | string 
-}>
+export type IQueResList = Map<string,string[] | string>
