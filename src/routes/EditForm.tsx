@@ -1,27 +1,28 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { IAllFormQuestions, IForm} from '../types';
+import { IAllFormQuestions, IForm } from '../types';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Types } from 'mongoose'
 import NavBar from '../components/NavBar';
 import FormEditor from '../components/FormEditor/FormEditor';
 import FormPreview from '../components/FormEditor/FormPreview';
+import Res from '../components/FormEditor/components/Res';
 
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
 
 function EditForm() {
 
   const { formId } = useParams()
-  const [aboutForm,setAboutForm] = useState<{title:string,desc?:string}>({title:'',desc:''})
+  const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: '', desc: '' })
   const [queSeq, setQueSeq] = useState<(Types.ObjectId | string)[]>([])
   const [allQuestions, setAllQues] = useState<IAllFormQuestions | null>(null)
-  const [currentState, setCurrentState] = useState<'Edit'|'Preview'>('Edit')
+  const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
 
   // ------------------------------------------------------------------------------------------------------------------
   // -------                           functions to add and edit questions     ----------------------------------------
   // ------------------------------------------------------------------------------------------------------------------
-  
+
   useEffect(() => {
     console.log("formId", formId)
     if (!formId) {
@@ -41,7 +42,7 @@ function EditForm() {
             allQ[ques].savedChanges = true
           }
           setAllQues(allQ)
-          setAboutForm({title:formInfo.title,desc:formInfo.desc})
+          setAboutForm({ title: formInfo.title, desc: formInfo.desc })
         }
       })
   }, [formId])
@@ -51,14 +52,17 @@ function EditForm() {
       <div className='w-full bg-white hidden sm:block'>
         <NavBar />
         <div className='flex  space-x-5 mx-auto w-fit h-fit text-xs'>
-          <button 
-            className='font-medium pb-2' 
-            onClick={(event)=>{event.preventDefault(); setCurrentState('Edit')}}
-            >Questions</button>
-          <button className='font-medium pb-2' >Responses</button>
-          <button className='font-medium pb-2' >Settings</button>
-          <button 
-            onClick={(event)=>{event.preventDefault(); setCurrentState('Preview')}}
+          <button
+            className='font-medium pb-2'
+            onClick={(event) => { event.preventDefault(); setCurrentState('Edit') }}
+          >Questions</button>
+          <button
+            className='font-medium pb-2'
+            onClick={(event) => { event.preventDefault(); setCurrentState('Res') }}
+          >Responses</button>
+          {/* <button className='font-medium pb-2' >Settings</button> */}
+          <button
+            onClick={(event) => { event.preventDefault(); setCurrentState('Preview') }}
             className='font-medium pb-2 flex items-center space-x-2' >
             Preview
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-4 h-4">
@@ -77,15 +81,17 @@ function EditForm() {
             <div className='font-medium' >Settings</div>
           </div>
         </div>
-        <main className={`${(currentState!=='Edit')?'hidden':''} flex space-x-2 w-full`}>
-          <FormEditor aboutForm={aboutForm} formId={formId } queSeq={queSeq} allQuestions={allQuestions} 
+        <main className={`${(currentState !== 'Edit') ? 'hidden' : ''} flex space-x-2 w-full`}>
+          <FormEditor aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions}
             setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} />
         </main>
-        <main className={`${(currentState!=='Preview')?'hidden':''} flex space-x-2 w-full`}>
-          <FormPreview  
+        <main className={`${(currentState !== 'Preview') ? 'hidden' : ''} flex space-x-2 w-full`}>
+          <FormPreview
             aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions} />
         </main>
-
+        {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
+          <Res formId={formId} allQuestions={allQuestions} />
+        </main>}
       </div>
     </div>
   )

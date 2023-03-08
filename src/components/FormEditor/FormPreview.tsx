@@ -42,7 +42,7 @@ function FormPreview(
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full '>
-        <TitleDescFormElement />
+        <TitleDescFormElement aboutForm={aboutForm} />
         <div 
           id='sortable' 
           className='flex flex-col  my-3 space-y-2 w-full '

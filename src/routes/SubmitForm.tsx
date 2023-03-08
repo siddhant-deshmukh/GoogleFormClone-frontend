@@ -25,28 +25,28 @@ function SubmitForm() {
       return new_
     })
   }
-  const submitForm = (quesReses : IQueResList,allQuestions : IAllFormQuestions | null) =>{
-    if(!allQuestions) return;
-    const questions_ : {_id:string, ans_type: IQuestionForm['ans_type'], res_array:string[] | string}[] = []
+  const submitForm = (quesReses: IQueResList, allQuestions: IAllFormQuestions | null) => {
+    if (!allQuestions) return;
+    const questions_: { _id: string, ans_type: IQuestionForm['ans_type'], res_array: string[] | string }[] = []
     console.log(quesReses)
-    quesReses.forEach((res,qId)=>{
-      console.log(qId,res)
+    quesReses.forEach((res, qId) => {
+      console.log(qId, res)
       questions_.push({
-        _id : qId,
-        ans_type : allQuestions[qId].ans_type,
+        _id: qId,
+        ans_type: allQuestions[qId].ans_type,
         res_array: res
       })
     })
-    console.log("Questions before sending! :",questions_)
-    axios.post(`${import.meta.env.VITE_API_URL}/res`,{
+    console.log("Questions before sending! :", questions_)
+    axios.post(`${import.meta.env.VITE_API_URL}/res`, {
       formId,
-      questions:questions_
-    },{withCredentials:true})
-      .then(res=>{
-        console.log("Sucesfully sended!",res)
+      questions: questions_
+    }, { withCredentials: true })
+      .then(res => {
+        console.log("Sucesfully sended!", res)
       })
-      .catch(err=>{
-        console.log("Failed",err)
+      .catch(err => {
+        console.log("Failed", err)
       })
   }
 
@@ -54,7 +54,7 @@ function SubmitForm() {
     let new_queResList: IQueResList = new Map()
     if (!allQuestions) return
 
-    console.log("URL : ",`${import.meta.env.VITE_API_URL}/res/f/${formId}`)
+    console.log("URL : ", `${import.meta.env.VITE_API_URL}/res/f/${formId}`)
     axios.get(`${import.meta.env.VITE_API_URL}/res/f/${formId}`, { withCredentials: true })
       .then(res => {
         console.log('previos response', res)
@@ -68,7 +68,10 @@ function SubmitForm() {
               res
             )
           })
+          console.log({new_queResList})
           setQueReses(new_queResList)
+        }else{
+          throw 'no response found'
         }
       })
       .catch((err) => {
@@ -112,12 +115,12 @@ function SubmitForm() {
     <div className="flex flex-col w-screen h-screen bg-purple-100" style={{ minWidth: '352px' }}>
       <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
         <div className='w-full h-full '>
-          <TitleDescFormElement />
+          <TitleDescFormElement aboutForm={aboutForm} />
           <div
             id='sortable'
             className='flex flex-col  my-3 space-y-2 w-full '
           >
-            {allQuestions && queSeq &&
+            {allQuestions !== null && queSeq !== null && quesReses &&
               queSeq.map((queKey) => {
                 let question = allQuestions[queKey.toString()]
                 let queRes = quesReses.get(queKey.toString())
@@ -134,14 +137,18 @@ function SubmitForm() {
             <button
               type={'submit'}
               className='px-3 py-1 bg-purple-200'
-              onClick={(event) => { event.preventDefault(); console.log(quesReses); submitForm(quesReses,allQuestions) }}
+              onClick={(event) => { event.preventDefault(); console.log({quesReses}); submitForm(quesReses, allQuestions) }}
             >
               Submit
             </button>
           </div>
 
+        <div>
+          {
+            JSON.stringify({ aboutForm, queSeq })
+          }
         </div>
-
+        </div>
       </div>
     </div>
   )

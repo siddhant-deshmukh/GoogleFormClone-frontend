@@ -1,7 +1,7 @@
 import { useCallback,  useEffect, useState } from 'react'
 import EditForm from './routes/EditForm';
 import {  GoogleOAuthProvider } from '@react-oauth/google';
-import LoginComponent from './components/AuthComponents';
+import LoginComponent from './routes/AuthPage';
 import { IUser } from './types';
 import { Route, Routes } from 'react-router-dom';
 import GithubLandingPage from './routes/GithubLandingPage';
@@ -20,22 +20,24 @@ function App() {
     })
       .then(res => res.json())
       .catch(err => console.error('While getting client', err))
-      .finally(() => {setUserInfo(null); setInitialPageLoading(false); console.log("Meow") })
+      .finally(() => {setUserInfo(null); setInitialPageLoading(false); })
       .then(data => {setUserInfo(data?.user); console.log({data},data.user);})
       .catch(err => {console.error('Modifying data', err); setUserInfo(null);})
-      .finally(() => { setInitialPageLoading(false); console.log("Meow")})
+      .finally(() => { setInitialPageLoading(false);})
   },[userInfo,setUserInfo])
 
   useEffect(() => {
-    console.log("Here in useEffect")
+    // console.log("Here in useEffect")
     refreshUserInfo()
   }, [setUserInfo])
 
   if(initialPageLoading){
     return (
       <div className='fixed w-screen h-screen left-0 top-0 flex items-center'>
-        <div className='mx-auto text-8xl font-extrabold'>
-          Loading ........
+        <div className='mx-auto flex flex-col'>
+          <img src={'/google-form.svg'} className='w-32 h-40 mx-auto' />
+          <h1 className='mx-auto w-fit font-bold text-2xl text-purple-400'>GoogleFormClone</h1>
+          <h3 className='mx-auto w-fit text-gray-500 mt-10 text-sm'>Loading</h3>
         </div>
       </div>
     )

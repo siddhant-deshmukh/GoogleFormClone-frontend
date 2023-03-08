@@ -100,7 +100,7 @@ function FormEditor(
       }
     })
   }
-  const saveForm = async (queSeq: (string | Types.ObjectId)[], allQuestions: IAllFormQuestions | null) => {
+  const saveForm = async (queSeq: (string | Types.ObjectId)[], allQuestions: IAllFormQuestions | null, aboutForm: { title: string, desc?: string | undefined }) => {
     if (!allQuestions || queSeq.length === 0) {
       console.log("No queSeq or questions to submit")
       return
@@ -132,6 +132,8 @@ function FormEditor(
     // console.log("New Questions : ", new_questions)
 
     await axios.put(`${import.meta.env.VITE_API_URL}/f/${formId}`, {
+      title: aboutForm.title,
+      desc:aboutForm.desc,
       questions,
       new_questions,
       delete_questions: []
@@ -155,11 +157,13 @@ function FormEditor(
         console.error("Updaing Form", err)
       })
   }
-
+  const editFormInfo = (title : string,desc : string) => {
+    setAboutForm(prev=>{return {...prev,title,desc}})
+  }
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full '>
-        <TitleDescFormElement />
+        <TitleDescFormElement editFormInfo={editFormInfo} aboutForm={aboutForm}/>
         <div id='sortable' className='flex flex-col  my-3 space-y-2 w-full '>
           {allQuestions && queSeq &&
             queSeq.map((ele) => {
@@ -182,7 +186,7 @@ function FormEditor(
 
           <button
             className='px-3 py-1 bg-purple-200'
-            onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions) }}>
+            onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions, aboutForm) }}>
             Submit
           </button>
         </div>

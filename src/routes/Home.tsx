@@ -86,7 +86,7 @@ export const Home = ({ userInfo,setUserInfo  }: { userInfo: IUser,setUserInfo: R
             <button onClick={(event)=>{event.preventDefault(); setWarnMsg(undefined)}} className="px-2 ">X</button>
           </div>
           <h3 className='font-medium'>Your Forms</h3>
-          <div className='w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4'>
+          <div className='w-full mt-3 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4'>
             { 
               formsInfo.map((formInfo)=>{
                 if(formInfo){

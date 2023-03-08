@@ -8,10 +8,10 @@ const NavBar = ({userInfo}:{userInfo?:IUser}) => {
   const navigate = useNavigate()
   return (
     <header className='flex  px-5 py-2 bg-white  items-center w-full justify-between'>
-      <div className='w-fit flex items-center space-x-3'>
-        <img src={'/googleForm.png'} className="w-6 h-8" />
+      <Link to='/' className='w-fit flex items-center space-x-1'>
+        <img src={'/google-form.svg'} className="w-12 h-12" />
         <span className='font-bold text-lg text-gray-500'>Form</span>
-      </div>
+      </Link>
       <div className='flex items-center w-fit space-x-3'>
         <button className='rounded-xl h-fit py-0.5 px-3 text-sm border items-center flex space-x-1 border-purple-300 '>
           <span className='text-purple-400 font-medium '>
