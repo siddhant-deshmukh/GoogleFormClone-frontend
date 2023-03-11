@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Types } from 'mongoose'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { IAllFormQuestions, IQuestionForm } from '../../types'
 import QuestionFormElement from './components/QuestionFormElement'
 import TitleDescFormElement from './components/TitleDescFormElement'
@@ -8,8 +8,9 @@ import TitleDescFormElement from './components/TitleDescFormElement'
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
 
 function FormEditor(
-  { aboutForm,setAboutForm, formId, queSeq, allQuestions,  setQueSeq, setAllQues }: {
+  { aboutForm, setAboutForm, formId, queSeq, allQuestions, setQueSeq, setAllQues, setErrMsg }: {
     aboutForm: { title: string, desc?: string | undefined },
+    setErrMsg: React.Dispatch<React.SetStateAction<string>>,
     formId: string | undefined,
     queSeq: (string | Types.ObjectId)[],
     allQuestions: IAllFormQuestions | null,
@@ -36,8 +37,13 @@ function FormEditor(
       }
     })
   }
-  const addQuestion = (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => {
+  const addQuestion = useCallback((after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => {
+    if(queSeq && queSeq.length >= 20){
+      setErrMsg('Question number should not exceed 20')
+      return
+    }
     const uniqueId = 'newId' + (new Date()).getTime();
+    
     setAllQues(prev => {
       if (newQuestion) {
         return {
@@ -67,7 +73,9 @@ function FormEditor(
       return prev.slice().concat([uniqueId])
     })
 
-  }
+  },[queSeq])
+
+
   const deleteQuestion = (delKey: string | Types.ObjectId) => {
     setQueSeq(prev => {
       let x = prev.findIndex((key) => (key === delKey))
@@ -133,7 +141,7 @@ function FormEditor(
 
     await axios.put(`${import.meta.env.VITE_API_URL}/f/${formId}`, {
       title: aboutForm.title,
-      desc:aboutForm.desc,
+      desc: aboutForm.desc,
       questions,
       new_questions,
       delete_questions: []
@@ -157,13 +165,15 @@ function FormEditor(
         console.error("Updaing Form", err)
       })
   }
-  const editFormInfo = (title : string,desc : string) => {
-    setAboutForm(prev=>{return {...prev,title,desc}})
+  const editFormInfo = (title: string, desc: string) => {
+    setAboutForm(prev => { return { ...prev, title, desc } })
   }
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
-      <div className='w-full h-full '>
-        <TitleDescFormElement editFormInfo={editFormInfo} aboutForm={aboutForm}/>
+      <div className='w-full h-full relative'>
+        
+        <TitleDescFormElement editFormInfo={editFormInfo} aboutForm={aboutForm} />
+
         <div id='sortable' className='flex flex-col  my-3 space-y-2 w-full '>
           {allQuestions && queSeq &&
             queSeq.map((ele) => {
@@ -190,10 +200,12 @@ function FormEditor(
             Submit
           </button>
         </div>
-        {
+        {/* {
           JSON.stringify(allQuestions)
-        }
+        } */}
       </div>
+
+      {/* Side Button to add new question */}
       <div className='sticky  hidden sm:flex sm:flex-col  w-fit py-2 px-1 rounded-lg h-20 bg-white top-10 border border-gray-200'>
         <button
           className='w-fit mx-auto rounded-full p-0.5  hover:bg-gray-100'
@@ -203,6 +215,7 @@ function FormEditor(
           </svg>
         </button>
       </div>
+      {/* Side Button to add new question in sm mode*/}
       <button
         className='w-fit sm:hidden fixed bottom-5 right-4 mx-auto rounded-full p-2 bg-purple-600 text-white hover:bg-purple-500'
         onClick={(event) => { event.preventDefault(); addQuestion() }}>

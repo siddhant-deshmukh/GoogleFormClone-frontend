@@ -1,7 +1,7 @@
 import { useCallback,  useEffect, useState } from 'react'
 import EditForm from './routes/EditForm';
 import {  GoogleOAuthProvider } from '@react-oauth/google';
-import LoginComponent from './routes/AuthPage';
+import AuthPage from './routes/AuthPage';
 import { IUser } from './types';
 import { Route, Routes } from 'react-router-dom';
 import GithubLandingPage from './routes/GithubLandingPage';
@@ -48,9 +48,9 @@ function App() {
           <div className='mx-auto'>
             <GoogleOAuthProvider clientId={import.meta.env.VITE_GoogleClientId}>
               <Routes>
-                <Route path="/" element={<LoginComponent authTypeToggle={'login'}/>} />
-                <Route path="/login" element={<LoginComponent authTypeToggle={'login'}/>} />
-                <Route path="/register" element={<LoginComponent authTypeToggle={'register'}/>} />
+                <Route path="/" element={<AuthPage authTypeToggle={'login'}/>} />
+                <Route path="/login" element={<AuthPage authTypeToggle={'login'}/>} />
+                <Route path="/register" element={<AuthPage authTypeToggle={'register'}/>} />
                 <Route path="/demo" element={<EditForm/>} />
                 <Route path="/login-github" element={<GithubLandingPage />} />
               </Routes>

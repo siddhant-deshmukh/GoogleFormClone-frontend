@@ -3,6 +3,7 @@ import { IQuestionForm } from '../../../types'
 import Checkbox from './AnsComponents/Checkbox'
 import DropDown from './AnsComponents/DropDown'
 import MCQ from './AnsComponents/MCQ'
+import ShortAns from './AnsComponents/ShortAns'
 import TextAns from './AnsComponents/TextAns'
 
 function QuestionElement(
@@ -40,8 +41,13 @@ function QuestionElement(
             question={question} queRes={queRes as string[]} changeRes={changeRes} />
         }
         {
-          (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
+          (question.ans_type === 'long_ans') &&
           <TextAns queKey={queKey.toString()}
+            queRes={queRes as string} changeRes={changeRes} />
+        }
+        {
+          (question.ans_type === 'short_ans') &&
+          <ShortAns queKey={queKey.toString()}
             queRes={queRes as string} changeRes={changeRes} />
         }
       </div>

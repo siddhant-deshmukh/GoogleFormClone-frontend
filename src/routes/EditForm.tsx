@@ -14,11 +14,12 @@ const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: u
 function EditForm() {
 
   const { formId } = useParams()
-  const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: '', desc: '' })
+  const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: 'Untitled Form', desc: '' })
   const [queSeq, setQueSeq] = useState<(Types.ObjectId | string)[]>([])
   const [allQuestions, setAllQues] = useState<IAllFormQuestions | null>(null)
   const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
-
+  const [errMsg, setErrMsg] = useState<string>('')
+  const [warnMsg, setWarnMsg] = useState<string>('')
   // ------------------------------------------------------------------------------------------------------------------
   // -------                           functions to add and edit questions     ----------------------------------------
   // ------------------------------------------------------------------------------------------------------------------
@@ -72,6 +73,16 @@ function EditForm() {
           </button>
         </div>
       </div>
+      {
+        errMsg !== '' && <div className='absolute w-full block top-24 z-30'>
+          <div className='px-4  top-0 w-full py-1 mb-4 z-30  max-w-md mx-auto flex items-center justify-between bg-red-100 dark:bg-gray-800'>
+            <div className="text-sm text-red-800 rounded-lg  dark:text-red-400" role="alert">
+              {errMsg}
+            </div>
+            <button className='p-1 ml-auto ' onClick={(event) => { event.preventDefault(); setErrMsg('') }}>X</button>
+          </div>
+        </div>
+      }
       <div className='w-full relative  justify-center  h-full overflow-y-auto'>
         <div className='w-full block sm:hidden'>
           <NavBar />
@@ -83,7 +94,7 @@ function EditForm() {
         </div>
         <main className={`${(currentState !== 'Edit') ? 'hidden' : ''} flex space-x-2 w-full`}>
           <FormEditor aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions}
-            setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} />
+            setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} setErrMsg={setErrMsg} />
         </main>
         <main className={`${(currentState !== 'Preview') ? 'hidden' : ''} flex space-x-2 w-full`}>
           <FormPreview

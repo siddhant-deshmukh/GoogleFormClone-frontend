@@ -68,9 +68,9 @@ function SubmitForm() {
               res
             )
           })
-          console.log({new_queResList})
+          console.log({ new_queResList })
           setQueReses(new_queResList)
-        }else{
+        } else {
           throw 'no response found'
         }
       })
@@ -126,10 +126,8 @@ function SubmitForm() {
                 let queRes = quesReses.get(queKey.toString())
                 if (!queKey || queRes === null || queRes === undefined) return;
                 return (
-                  <>
-                    <QuestionElement key={queKey.toString()} queKey={queKey.toString()}
-                      question={question} queRes={queRes} changeRes={changeRes} />
-                  </>
+                  <QuestionElement key={queKey.toString()} queKey={queKey.toString()}
+                    question={question} queRes={queRes} changeRes={changeRes} />
                 )
               })
             }
@@ -137,17 +135,17 @@ function SubmitForm() {
             <button
               type={'submit'}
               className='px-3 py-1 bg-purple-200'
-              onClick={(event) => { event.preventDefault(); console.log({quesReses}); submitForm(quesReses, allQuestions) }}
+              onClick={(event) => { event.preventDefault(); console.log({ quesReses }); submitForm(quesReses, allQuestions) }}
             >
               Submit
             </button>
           </div>
 
-        <div>
-          {
-            JSON.stringify({ aboutForm, queSeq })
-          }
-        </div>
+          <div>
+            {
+              JSON.stringify({ aboutForm, queSeq })
+            }
+          </div>
         </div>
       </div>
     </div>
