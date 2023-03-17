@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* body.dragging,
+body.dragging * {
+    cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+} */
+
+/* ol.sortable-options li.placeholder {
+    position: relative; */
+    /** More li styles **/
+/* } */
+
+/* ol.sortable-options li.placeholder:before {
+    position: absolute; */
+    /** Define arrowhead **/
+/* } */

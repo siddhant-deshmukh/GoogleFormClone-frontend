@@ -38,7 +38,7 @@ function FormPreview(
         (ans_type === "dropdown" || ans_type === "checkbox" || ans_type === "mcq") ? [] : ""
       )
     })
-    // console.log({new_queResList})
+    console.log({new_queResList})
     setQueReses(new_queResList)
   }, [queSeq, allQuestions])
 
@@ -82,10 +82,27 @@ function FormPreview(
     setSubmitMsg('Can be uploaded! Answers satisfy conditions!')
     console.log(questions)
   }, [queSeq, allQuestions, quesReses])
+  // useEffect(()=>{
+  //   const queRes_ = new Map()
+  //   if(!allQuestions) return;
+  //   queSeq.forEach((queKey)=>{
+  //     let type_ = allQuestions[queKey.toString()].ans_type 
+  //     if(type_ ==='long_ans' || type_==='short_ans'){
 
+  //     }else{
+
+  //     }
+  //   })
+  // },[queSeq, allQuestions])
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full '>
+        
+        {/* <hr/>
+        {
+          JSON.stringify(quesReses)
+        }
+        <hr/> */}
         <TitleDescFormElement aboutForm={aboutForm} />
         <div
           id='sortable'
@@ -95,7 +112,7 @@ function FormPreview(
             queSeq.map((queKey) => {
               let question = allQuestions[queKey.toString()]
               let queRes = quesReses.get(queKey.toString())
-              if (!queKey || queRes === null || queRes === undefined) return;
+              if (!queKey) return;
               return (
 
                 <QuestionElement key={queKey.toString()} queKey={queKey.toString()}

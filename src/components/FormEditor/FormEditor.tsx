@@ -1,19 +1,24 @@
 import axios from 'axios'
 import { Types } from 'mongoose'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { IAllFormQuestions, IQuestionForm } from '../../types'
 import QuestionFormElement from './components/QuestionFormElement'
 import TitleDescFormElement from './components/TitleDescFormElement'
+import { ReactSortable } from 'react-sortablejs'
 
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
-
+export interface ItemType {
+  id: string
+}
 function FormEditor(
-  { aboutForm, setAboutForm, formId, queSeq, allQuestions, setQueSeq, setAllQues, setErrMsg }: {
+  { aboutForm, setAboutForm, formId, queSeq, allQuestions,queListState, setQueSeq, setAllQues, setErrMsg, setQueListState }: {
     aboutForm: { title: string, desc?: string | undefined },
     setErrMsg: React.Dispatch<React.SetStateAction<string>>,
     formId: string | undefined,
     queSeq: (string | Types.ObjectId)[],
+    queListState: ItemType[],
     allQuestions: IAllFormQuestions | null,
+    setQueListState: React.Dispatch<React.SetStateAction<ItemType[]>>,
     setQueSeq: React.Dispatch<React.SetStateAction<(string | Types.ObjectId)[]>>,
     setAllQues: React.Dispatch<React.SetStateAction<IAllFormQuestions | null>>,
     setAboutForm: React.Dispatch<React.SetStateAction<{ title: string, desc?: string | undefined }>>
@@ -62,23 +67,30 @@ function FormEditor(
         }
       }
     })
-    setQueSeq(prev => {
+    // setQueSeq(prev => {
+    //   if (after) {
+    //     let x = prev.findIndex((key) => (key === after))
+    //     if (x !== -1) {
+    //       let new_ = prev.slice(0, x + 1).concat([uniqueId, ...prev.slice(x + 1)])
+    //       return new_
+    //     }
+    //   }
+    //   return prev.slice().concat([uniqueId])
+    // })
+    setQueListState(prev => {
       if (after) {
-        let x = prev.findIndex((key) => (key === after))
+        let x = prev.findIndex((key) => (key.id === after))
         if (x !== -1) {
-          let new_ = prev.slice(0, x + 1).concat([uniqueId, ...prev.slice(x + 1)])
+          let new_ = prev.slice(0, x + 1).concat([{id:uniqueId}, ...prev.slice(x + 1)])
           return new_
         }
       }
-      return prev.slice().concat([uniqueId])
+      return prev.slice().concat([{id:uniqueId}])
     })
-
-  },[queSeq])
-
-
+  },[queListState])
   const deleteQuestion = (delKey: string | Types.ObjectId) => {
-    setQueSeq(prev => {
-      let x = prev.findIndex((key) => (key === delKey))
+    setQueListState(prev => {
+      let x = prev.findIndex((key) => (key.id === delKey))
       let new_ = prev.slice(0, x).concat(prev.slice(x + 1))
       return new_
     })
@@ -168,21 +180,38 @@ function FormEditor(
   const editFormInfo = (title: string, desc: string) => {
     setAboutForm(prev => { return { ...prev, title, desc } })
   }
+
+  useEffect(()=>{
+    if(queListState.length ===0 ) return;
+    const queSeq_ = queListState.map((ele)=>{return ele.id})
+    setQueSeq(queSeq_)
+  },[queListState])
+
+  // useEffect(()=>{
+  //   console.log(queSeq)
+  //   const queList_ = queSeq.map((key)=>{return {id:key.toString()}})
+  //   setQueListState(queList_)
+  // },[])
+
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full relative'>
         
         <TitleDescFormElement editFormInfo={editFormInfo} aboutForm={aboutForm} />
 
-        <div id='sortable' className='flex flex-col  my-3 space-y-2 w-full '>
+        <ReactSortable 
+        
+          list={queListState} setList={setQueListState}
+          handle=".question-sort-handle"
+          id='sortable' className='flex flex-col  my-3 space-y-2 w-full '>
           {allQuestions && queSeq &&
-            queSeq.map((ele) => {
-              let isSelected = (selectedKey === ele.toString()) ? true : false
+            queListState.map((ele) => {
+              let isSelected = (selectedKey === ele.id.toString()) ? true : false
               return (
                 <QuestionFormElement
-                  key={ele.toString()}
-                  queKey={ele}
-                  question={allQuestions[ele.toString()]}
+                  key={ele.id.toString()}
+                  queKey={ele.id}
+                  question={allQuestions[ele.id.toString()]}
                   editQuestion={editQuestion}
                   deleteQuestion={deleteQuestion}
                   isSelected={isSelected}
@@ -194,15 +223,15 @@ function FormEditor(
             })
           }
 
-          <button
-            className='px-3 py-1 bg-purple-200'
-            onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions, aboutForm) }}>
-            Submit
-          </button>
-        </div>
-        {/* {
-          JSON.stringify(allQuestions)
-        } */}
+        </ReactSortable>
+        <button
+          className='px-3 py-1 bg-purple-200'
+          onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions, aboutForm) }}>
+          Submit
+        </button>
+        {
+          JSON.stringify(queSeq)
+        }
       </div>
 
       {/* Side Button to add new question */}

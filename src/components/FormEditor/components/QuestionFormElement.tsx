@@ -5,124 +5,101 @@ import MultipleChoice from './QueAnsComponents/MultipleChoice'
 
 //: { [quetype : 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown' ] : {text:string, svg:JSX.Element} } 
 
-const QuestionFormElement =
-  ({ queKey, question, editQuestion, isSelected, setSelectedKey, deleteQuestion, addQuestion, saveQuestion }
-    : {
-      queKey: string | Types.ObjectId,
-      question: IQuestionForm,
-      isSelected: boolean,
-      setSelectedKey: React.Dispatch<React.SetStateAction<string | null>>,
-      editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void,
-      deleteQuestion: (delKey: string | Types.ObjectId) => void,
-      addQuestion: (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => void,
-      saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>
-    }) => {
+const QuestionFormElement = ({
+  queKey, question, editQuestion, isSelected, setSelectedKey, deleteQuestion, addQuestion, saveQuestion
+}
+  : {
+    queKey: string | Types.ObjectId,
+    question: IQuestionForm,
+    isSelected: boolean,
+    setSelectedKey: React.Dispatch<React.SetStateAction<string | null>>,
+    editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void,
+    deleteQuestion: (delKey: string | Types.ObjectId) => void,
+    addQuestion: (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => void,
+    saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>
+  }) => {
 
-    const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
-    const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: false }>({
-      titleLen: false,
-      optionsLen: false,
-      optionsNum: false,
-    })
-    const changeAnsType = (prevType: IAnsTypes, selectedType: IAnsTypes) => {
-      setChooseAnsTypeToggle(false)
-      if (prevType === selectedType) return;
-      if (selectedType === 'checkbox' || selectedType === 'mcq' || selectedType === 'dropdown') {
-        if (!(prevType === 'checkbox' || prevType === 'mcq' || prevType === 'dropdown')) {
-          editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: ['Option 1'], correct_ans: undefined })
-        } else {
-          editQuestion(queKey, { ...question, ans_type: selectedType })
-        }
-      } else if (selectedType === 'short_ans' || selectedType === 'long_ans') {
-        editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: undefined, correct_ans: undefined })
+  const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
+  const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: false }>({
+    titleLen: false,
+    optionsLen: false,
+    optionsNum: false,
+  })
+  const changeAnsType = (prevType: IAnsTypes, selectedType: IAnsTypes) => {
+    setChooseAnsTypeToggle(false)
+    if (prevType === selectedType) return;
+    if (selectedType === 'checkbox' || selectedType === 'mcq' || selectedType === 'dropdown') {
+      if (!(prevType === 'checkbox' || prevType === 'mcq' || prevType === 'dropdown')) {
+        editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: ['Option 1'], correct_ans: undefined })
       } else {
-
+        editQuestion(queKey, { ...question, ans_type: selectedType })
       }
+    } else if (selectedType === 'short_ans' || selectedType === 'long_ans') {
+      editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: undefined, correct_ans: undefined })
+    } else {
+
     }
+  }
 
-    return (
-      <div
-        onClick={(event) => { event.preventDefault(); setSelectedKey(queKey.toString()) }}
-        className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
-      >
-        {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-        <div className='w-full h-fit flex relative items-center'>
+  return (
+    <div
+      onClick={(event) => { event.preventDefault(); setSelectedKey(queKey.toString()) }}
+      className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
+    >
+      {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
+      <div className='question-sort-handle w-full h-fit hover:cursor-grabbing flex relative items-center'>
 
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-fit mx-auto">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-          </svg>
-        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-fit mx-auto">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+      </div>
 
-        {/* ------------------------------ Shows errors  --------------------------------------*/}
-        <div className=''>
-          {
-            queErrors &&
-            Object.keys(queErrors).map((key, index) => {
-              //@ts-ignore
-              if (!queErrors[key]) return <div className='hidden' key={index}></div>
-              return <div className='flex text-xs text-red-800 items-center pt-1' key={index}>
-                <svg aria-hidden="true" className="flex-shrink-0 inline w-3  h-3 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                <div>
-                  {/** @ts-ignore */}
-                  {errors[key]}
-                </div>
-              </div>
-            })
-          }
-        </div>
-
-        {/* ------------------------------ first row question title and question type  --------------------------------------*/}
+      {/* ------------------------------ Shows errors  --------------------------------------*/}
+      <div className=''>
         {
-          isSelected &&
-          <div className='flex flex-col space-y-3 w-full '>
-            <>
-              <div className='flex w-full  items-center justify-between space-x-4'>
-                <input
-                  onFocus={(event) => { event.target.select() }}
-                  className='py-3 pl-3 font-normal text-sm w-full bg-gray-100 border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 '
-                  placeholder={'Question'}
-                  value={question.title}
-                  onChange={(event) => {
-                    event.preventDefault();
-                    editQuestion(queKey, { ...question, title: event.target.value });
-                    if (event.target.value.length > 50 || event.target.value.length < 3) {
-                      setErrors((prev) => {
-                        return { ...prev, titleLen: true }
-                      })
-                    } else {
-                      setErrors((prev) => {
-                        return { ...prev, titleLen: false }
-                      })
-                    }
-                  }}
-                />
-                {/* after sm mode this will be visible */}
-                {/* Select ans type */}
-                <div className='relative w-48 hidden sm:block'>
-                  {
-                    !chooseAnsTypeToggle &&
-                    <button
-                      onClick={(event) => { event.preventDefault(); setChooseAnsTypeToggle(true) }}
-                      className='w-full items-center flex border border-gray-300 p-2  justify-between'>
-
-                      {ansTypesStates[question.ans_type].svg}
-
-                      <span className='w-full text-xs text-left pl-2'>{ansTypesStates[question.ans_type].text}</span>
-
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                    </button>
-                  }
-                  {
-                    chooseAnsTypeToggle &&
-                    <SelectFromAnsTypes ansType={question.ans_type} changeAnsType={changeAnsType} />
-                  }
-                </div>
+          queErrors &&
+          Object.keys(queErrors).map((key, index) => {
+            //@ts-ignore
+            if (!queErrors[key]) return <div className='hidden' key={index}></div>
+            return <div className='flex text-xs text-red-800 items-center pt-1' key={index}>
+              <svg aria-hidden="true" className="flex-shrink-0 inline w-3  h-3 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+              <div>
+                {/** @ts-ignore */}
+                {errors[key]}
               </div>
-              {/* in sm mode this will be visible */}
+            </div>
+          })
+        }
+      </div>
+
+      {/* ------------------------------ first row question title and question type  --------------------------------------*/}
+      {
+        isSelected &&
+        <div className='flex flex-col space-y-3 w-full '>
+          <>
+            <div className='flex w-full  items-center justify-between space-x-4'>
+              <input
+                onFocus={(event) => { event.target.select() }}
+                className='py-3 pl-3 font-normal text-sm w-full bg-gray-100 border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 '
+                placeholder={'Question'}
+                value={question.title}
+                onChange={(event) => {
+                  event.preventDefault();
+                  editQuestion(queKey, { ...question, title: event.target.value });
+                  if (event.target.value.length > 50 || event.target.value.length < 3) {
+                    setErrors((prev) => {
+                      return { ...prev, titleLen: true }
+                    })
+                  } else {
+                    setErrors((prev) => {
+                      return { ...prev, titleLen: false }
+                    })
+                  }
+                }}
+              />
+              {/* after sm mode this will be visible */}
               {/* Select ans type */}
-              <div className='relative w-40 text-xs block sm:hidden'>
+              <div className='relative w-48 hidden sm:block'>
                 {
                   !chooseAnsTypeToggle &&
                   <button
@@ -143,74 +120,98 @@ const QuestionFormElement =
                   <SelectFromAnsTypes ansType={question.ans_type} changeAnsType={changeAnsType} />
                 }
               </div>
-            </>
-            {
-              question.desc &&
-              <input
-                onFocus={(event) => { event.target.select() }}
-                className='text-xs border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
-                placeholder={'Description'}
-                value={question.desc}
-                onChange={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, desc: event.target.value }) }} />
-            }
-          </div>
-        }
-        {
-          !isSelected &&
-          <div className=''>
-            {question.title}
-            {/*------------------------------------ Tag indeicating question state   
-              e.g new means question is new i.e just created
-                  saved means questions is old and saved and unsaved means question is yet to be saved
-            */}
-            {
-              question._id?.slice(0, 3) === 'new' &&
-              <span style={{ fontSize: '12px' }} className="bg-blue-100 text-blue-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">new</span>
-            }
-            {
-              question._id?.slice(0, 3) !== 'new' && question.savedChanges &&
-              <span style={{ fontSize: '12px' }} className="bg-gray-100 text-gray-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">saved</span>
-            }
-            {
-              question._id?.slice(0, 3) !== 'new' && (!question.savedChanges) &&
-              <span style={{ fontSize: '12px' }} className="bg-red-100 text-red-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">unsaved</span>
-            }
-          </div>
-        }
-
-
-        {/*------------------------------------ Ans as per type -------------------------------------------------------- */}
-        <div className='w-full flex flex-col space-y-2'>
-          {
-            (question.ans_type === 'mcq' || question.ans_type === 'checkbox' || question.ans_type === 'dropdown') &&
-            <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} editQuestion={editQuestion} isSelected={isSelected} />
-          }
-          {
-            (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
-            <div className=' w-80 mt-2 mb-3  px-4'>
-              <input
-                disabled
-                onFocus={(event) => { event.target.select() }}
-                className='text-xs bg-white  w-full border-b-2  border-b-gray-200 text-gray-700  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
-                defaultValue={(question.ans_type === 'short_ans') ? '  Short Answer' : '  Long Answer'} />
             </div>
+            {/* in sm mode this will be visible */}
+            {/* Select ans type */}
+            <div className='relative w-40 text-xs block sm:hidden'>
+              {
+                !chooseAnsTypeToggle &&
+                <button
+                  onClick={(event) => { event.preventDefault(); setChooseAnsTypeToggle(true) }}
+                  className='w-full items-center flex border border-gray-300 p-2  justify-between'>
+
+                  {ansTypesStates[question.ans_type].svg}
+
+                  <span className='w-full text-xs text-left pl-2'>{ansTypesStates[question.ans_type].text}</span>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </button>
+              }
+              {
+                chooseAnsTypeToggle &&
+                <SelectFromAnsTypes ansType={question.ans_type} changeAnsType={changeAnsType} />
+              }
+            </div>
+          </>
+          {
+            question.desc &&
+            <input
+              onFocus={(event) => { event.target.select() }}
+              className='text-xs border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
+              placeholder={'Description'}
+              value={question.desc}
+              onChange={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, desc: event.target.value }) }} />
           }
         </div>
+      }
+      {
+        !isSelected &&
+        <div className=''>
+          {question.title}
+          {/*------------------------------------ Tag indeicating question state   
+            e.g new means question is new i.e just created
+                saved means questions is old and saved and unsaved means question is yet to be saved
+          */}
+          {
+            question._id?.slice(0, 3) === 'new' &&
+            <span style={{ fontSize: '12px' }} className="bg-blue-100 text-blue-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">new</span>
+          }
+          {
+            question._id?.slice(0, 3) !== 'new' && question.savedChanges &&
+            <span style={{ fontSize: '12px' }} className="bg-gray-100 text-gray-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">saved</span>
+          }
+          {
+            question._id?.slice(0, 3) !== 'new' && (!question.savedChanges) &&
+            <span style={{ fontSize: '12px' }} className="bg-red-100 text-red-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">unsaved</span>
+          }
+        </div>
+      }
 
+
+      {/*------------------------------------ Ans as per type -------------------------------------------------------- */}
+      <div className='w-full flex flex-col space-y-2'>
         {
-          isSelected &&
-          <QuestionFooter
-            queKey={queKey}
-            question={question}
-            editQuestion={editQuestion}
-            deleteQuestion={deleteQuestion}
-            addQuestion={addQuestion}
-            saveQuestion={saveQuestion}
-          />
+          (question.ans_type === 'mcq' || question.ans_type === 'checkbox' || question.ans_type === 'dropdown') &&
+          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} editQuestion={editQuestion} isSelected={isSelected} />
+        }
+        {
+          (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
+          <div className=' w-80 mt-2 mb-3  px-4'>
+            <input
+              disabled
+              onFocus={(event) => { event.target.select() }}
+              className='text-xs bg-white  w-full border-b-2  border-b-gray-200 text-gray-700  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
+              defaultValue={(question.ans_type === 'short_ans') ? '  Short Answer' : '  Long Answer'} />
+          </div>
         }
       </div>
-    )
-  }
+
+      {
+        isSelected &&
+        <QuestionFooter
+          queKey={queKey}
+          question={question}
+          editQuestion={editQuestion}
+          deleteQuestion={deleteQuestion}
+          addQuestion={addQuestion}
+          saveQuestion={saveQuestion}
+        />
+      }
+    </div>
+  )
+}
 
 function QuestionFooter(
   { queKey, question, editQuestion, deleteQuestion, addQuestion, saveQuestion }: {

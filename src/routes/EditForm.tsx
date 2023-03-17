@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Types } from 'mongoose'
 import NavBar from '../components/NavBar';
-import FormEditor from '../components/FormEditor/FormEditor';
+import FormEditor, { ItemType } from '../components/FormEditor/FormEditor';
 import FormPreview from '../components/FormEditor/FormPreview';
 import Res from '../components/FormEditor/components/Res';
 
@@ -17,6 +17,8 @@ function EditForm() {
   const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: 'Untitled Form', desc: '' })
   const [queSeq, setQueSeq] = useState<(Types.ObjectId | string)[]>([])
   const [allQuestions, setAllQues] = useState<IAllFormQuestions | null>(null)
+  const [queListState, setQueListState] = useState<ItemType[]>([]);
+
   const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
   const [errMsg, setErrMsg] = useState<string>('')
   const [warnMsg, setWarnMsg] = useState<string>('')
@@ -28,7 +30,7 @@ function EditForm() {
     console.log("formId", formId)
     if (!formId) {
       setAllQues(defaultAllQuestions)
-      setQueSeq(["0"])
+      setQueListState([{id:"0"}])
       return
     }
     axios.get(`${import.meta.env.VITE_API_URL}/f/${formId}?withQuestions=true`, { withCredentials: true })
@@ -38,7 +40,9 @@ function EditForm() {
           const formInfo: IForm = data.form
           const allQ: IAllFormQuestions = data.questions
           console.log("Form data", formId, data)
-          setQueSeq(formInfo.questions)
+
+          const allQueList_ = formInfo.questions.map((queKey)=>{return {id:queKey.toString()}})
+          setQueListState(allQueList_)
           for (let ques in allQ) {
             allQ[ques].savedChanges = true
           }
@@ -92,14 +96,24 @@ function EditForm() {
             <div className='font-medium' >Settings</div>
           </div>
         </div>
-        <main className={`${(currentState !== 'Edit') ? 'hidden' : ''} flex space-x-2 w-full`}>
+        {/* {
+          JSON.stringify(queSeq)
+        }
+        <hr/>
+        {
+          JSON.stringify(allQuestions)
+        }
+        <hr/> */}
+
+        {currentState === 'Edit' &&<main className={` flex space-x-2 w-full`}>
           <FormEditor aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions}
-            setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} setErrMsg={setErrMsg} />
-        </main>
-        <main className={`${(currentState !== 'Preview') ? 'hidden' : ''} flex space-x-2 w-full`}>
+            setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} setErrMsg={setErrMsg}
+            queListState={queListState} setQueListState={setQueListState} />
+        </main>}
+        {currentState === 'Preview' &&<main className={`flex space-x-2 w-full`}>
           <FormPreview
             aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions} />
-        </main>
+        </main>}
         {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
           <Res formId={formId} allQuestions={allQuestions} />
         </main>}
