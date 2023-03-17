@@ -1,8 +1,8 @@
 import { Types } from 'mongoose'
-import React, { useCallback, useEffect, useState } from 'react'
-import { IAllFormQuestions, IQueResList, IQuestionForm } from '../../types'
-import QuestionElement from './components/QuestionElement'
-import TitleDescFormElement from './components/TitleDescFormElement'
+import  { useCallback, useEffect, useState } from 'react'
+import { IAllFormQuestions, IQueResList, IQuestionForm } from '../types'
+import QuestionElement from './FormEditor/QuestionElement'
+import TitleDescFormElement from './FormEditor/TitleDescFormElement'
 
 const defalutQueResList = new Map()
 

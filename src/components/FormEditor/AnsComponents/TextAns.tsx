@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { IQuestionForm } from '../../../../types'
+import { IQuestionForm } from '../../../types'
 
 function TextAns({ changeRes, queKey }: {
   queKey: string,

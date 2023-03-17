@@ -2,8 +2,8 @@ import axios from 'axios'
 import { Types } from 'mongoose'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import QuestionElement from '../components/FormEditor/components/QuestionElement'
-import TitleDescFormElement from '../components/FormEditor/components/TitleDescFormElement'
+import QuestionElement from '../components/FormEditor/QuestionElement'
+import TitleDescFormElement from '../components/FormEditor/TitleDescFormElement'
 import { IAllFormQuestions, IForm, IQueResList, IQuestionForm } from '../types'
 
 const defalutQueResList = new Map()

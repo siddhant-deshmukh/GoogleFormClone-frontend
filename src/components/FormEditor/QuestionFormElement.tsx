@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { IAnsTypes, IQuestionForm } from '../../../types'
+import { IAnsTypes, IQuestionForm } from '../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
 
@@ -44,10 +44,10 @@ const QuestionFormElement = ({
   return (
     <div
       onClick={(event) => { event.preventDefault(); setSelectedKey(queKey.toString()) }}
-      className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
+      className={`w-full  pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-      <div className='question-sort-handle w-full h-fit hover:cursor-grabbing flex relative items-center'>
+      <div className='question-sort-handle w-full py-0.5 h-fit hover:cursor-grabbing flex relative items-center'>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-fit mx-auto">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { IQuestionForm } from '../../../types'
+import { IQuestionForm } from '../../types'
 import Checkbox from './AnsComponents/Checkbox'
 import DropDown from './AnsComponents/DropDown'
 import MCQ from './AnsComponents/MCQ'

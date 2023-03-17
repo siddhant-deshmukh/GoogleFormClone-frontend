@@ -51,7 +51,7 @@ function App() {
                 <Route path="/" element={<AuthPage authTypeToggle={'login'}/>} />
                 <Route path="/login" element={<AuthPage authTypeToggle={'login'}/>} />
                 <Route path="/register" element={<AuthPage authTypeToggle={'register'}/>} />
-                <Route path="/demo" element={<EditForm/>} />
+                <Route path="/demo" element={<EditForm />} />
                 <Route path="/login-github" element={<GithubLandingPage />} />
               </Routes>
             </GoogleOAuthProvider>
@@ -62,9 +62,9 @@ function App() {
       return (
         <Routes>
           <Route path="/" element={<Home userInfo={userInfo} setUserInfo={setUserInfo}/>} />
-          <Route path="/demo" element={<EditForm/>} />
-          <Route path="/form/:formId/edit" element={<EditForm/>} />
-          <Route path="/form/:formId/preview" element={<EditForm/>} />
+          <Route path="/demo" element={<EditForm userInfo={userInfo}/>} />
+          <Route path="/form/:formId/edit" element={<EditForm userInfo={userInfo}/>} />
+          <Route path="/form/:formId/preview" element={<EditForm userInfo={userInfo}/>} />
           <Route path="/form/:formId" element={<SubmitForm/>} />
           <Route path="*" element={<Home userInfo={userInfo} setUserInfo={setUserInfo}/>} />
         </Routes>

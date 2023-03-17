@@ -1,5 +1,6 @@
 import React from 'react'
-import { IQuestionForm } from '../../../../types'
+import { IQuestionForm } from '../../../types'
+
 
 function Checkbox(
   { question, changeRes, queKey, queRes }: {

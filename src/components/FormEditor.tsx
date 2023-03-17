@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { Types } from 'mongoose'
 import React, { useCallback, useEffect, useState } from 'react'
-import { IAllFormQuestions, IQuestionForm } from '../../types'
-import QuestionFormElement from './components/QuestionFormElement'
-import TitleDescFormElement from './components/TitleDescFormElement'
+import { IAllFormQuestions, IQuestionForm } from '../types'
+import QuestionFormElement from './FormEditor/QuestionFormElement'
+import TitleDescFormElement from './FormEditor/TitleDescFormElement'
 import { ReactSortable } from 'react-sortablejs'
 
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
@@ -194,7 +194,7 @@ function FormEditor(
   // },[])
 
   return (
-    <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
+    <div className='relative  my-2 flex px-0.5 space-x-2  w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full relative'>
         
         <TitleDescFormElement editFormInfo={editFormInfo} aboutForm={aboutForm} />
@@ -229,9 +229,9 @@ function FormEditor(
           onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions, aboutForm) }}>
           Submit
         </button>
-        {
+        {/* {
           JSON.stringify(queSeq)
-        }
+        } */}
       </div>
 
       {/* Side Button to add new question */}

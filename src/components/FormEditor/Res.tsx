@@ -1,5 +1,5 @@
 import React from 'react'
-import { IAllFormQuestions } from '../../../types'
+import { IAllFormQuestions } from '../../types'
 import ResSummery from './ResSummery'
 
 const Res = (
