@@ -5,6 +5,7 @@ const ResSummery = ({ formId }: { formId: string }) => {
   const [smry,setSmry] = useState(null)
 
   useEffect(() => {
+    if(smry) return
     axios.get(`${import.meta.env.VITE_API_URL}/res/summery/f/${formId}`, { withCredentials: true })
       .then((res)=>{
         const {data} = res
@@ -13,7 +14,7 @@ const ResSummery = ({ formId }: { formId: string }) => {
         }
       })
       .catch((err)=>{
-
+        setSmry(undefined)
       })
   }, [])
 

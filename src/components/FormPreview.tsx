@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
-import  { useCallback, useEffect, useState } from 'react'
-import { IAllFormQuestions, IQueResList, IQuestionForm } from '../types'
+import  { useCallback,  useMemo, useState } from 'react'
+import { IAllFormQuestions, IQueResList } from '../types'
 import QuestionElement from './FormEditor/QuestionElement'
 import TitleDescFormElement from './FormEditor/TitleDescFormElement'
 
@@ -27,10 +27,10 @@ function FormPreview(
       return new_
     })
   }
-  useEffect(() => {
+  useMemo(() => {
     let new_queResList: IQueResList = new Map()
     if (!allQuestions) return
-    queSeq.forEach((qId) => {
+    Object.keys(allQuestions).forEach((qId) => {
       const { ans_type } = allQuestions[qId.toString()]
 
       new_queResList.set(
@@ -40,7 +40,7 @@ function FormPreview(
     })
     console.log({new_queResList})
     setQueReses(new_queResList)
-  }, [queSeq, allQuestions])
+  }, [allQuestions])
 
   const getReadyToSubmitForm = useCallback(() => {
     if (!allQuestions) return;

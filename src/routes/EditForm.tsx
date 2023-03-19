@@ -114,15 +114,21 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
         }
         <hr/> */}
 
-        {currentState === 'Edit' && <main className={` flex space-x-2 w-full`}>
+        <main 
+          className={` flex space-x-2 w-full ${(currentState === 'Edit')?'block':'hidden'}`}
+          >
           <FormEditor aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions}
             setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} setErrMsg={setErrMsg}
-            queListState={queListState} setQueListState={setQueListState} />
-        </main>}
-        {currentState === 'Preview' && <main className={`flex space-x-2 w-full`}>
+            queListState={queListState} setQueListState={setQueListState} 
+            setSuccessMsg={setSuccessMsg}/>
+        </main>
+        
+        
+        <main className={` flex space-x-2 w-full ${(currentState === 'Preview')?'block':'hidden'}`}>
           <FormPreview
             aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions} />
-        </main>}
+        </main>
+        
         {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
           <Res formId={formId} allQuestions={allQuestions} />
         </main>}

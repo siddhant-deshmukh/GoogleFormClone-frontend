@@ -11,13 +11,14 @@ export interface ItemType {
   id: string
 }
 function FormEditor(
-  { aboutForm, setAboutForm, formId, queSeq, allQuestions,queListState, setQueSeq, setAllQues, setErrMsg, setQueListState }: {
+  { aboutForm, setAboutForm, formId, queSeq, allQuestions,queListState, setQueSeq, setAllQues, setErrMsg, setQueListState, setSuccessMsg }: {
     aboutForm: { title: string, desc?: string | undefined },
     setErrMsg: React.Dispatch<React.SetStateAction<string>>,
     formId: string | undefined,
     queSeq: (string | Types.ObjectId)[],
     queListState: ItemType[],
     allQuestions: IAllFormQuestions | null,
+    setSuccessMsg: React.Dispatch<React.SetStateAction<string>>,
     setQueListState: React.Dispatch<React.SetStateAction<ItemType[]>>,
     setQueSeq: React.Dispatch<React.SetStateAction<(string | Types.ObjectId)[]>>,
     setAllQues: React.Dispatch<React.SetStateAction<IAllFormQuestions | null>>,
@@ -26,6 +27,7 @@ function FormEditor(
 ) {
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  const [savingChanges,setSaving] = useState<boolean>(false)
 
   const editQuestion = (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => {
     setAllQues((prev) => {
@@ -110,15 +112,18 @@ function FormEditor(
     }, { withCredentials: true })
       .then((value) => {
         console.log("Updaing Question", value)
+        setAllQues((prev) => {
+          if (!prev) return null
+          const que = prev[queKey.toString()]
+          return {
+            ...prev,
+            [queKey.toString()]: { ...que, savedChanges: true },
+          }
+        })
       })
-    setAllQues((prev) => {
-      if (!prev) return null
-      const que = prev[queKey.toString()]
-      return {
-        ...prev,
-        [queKey.toString()]: { ...que, savedChanges: true },
-      }
-    })
+      .catch((err)=>{
+        setErrMsg("Some error occured while saving question!")
+      })
   }
   const saveForm = async (queSeq: (string | Types.ObjectId)[], allQuestions: IAllFormQuestions | null, aboutForm: { title: string, desc?: string | undefined }) => {
     if (!allQuestions || queSeq.length === 0) {
@@ -145,7 +150,8 @@ function FormEditor(
       }
     })
     if (areUnsavedChanges) {
-      console.log("Their are some unsaved questions!")
+      setErrMsg("Please save all the questions!")
+      console.log("Their are some unsaved questions first!")
       return
     }
     // console.log("questions : ", questions)
@@ -172,6 +178,7 @@ function FormEditor(
         })
         setQueSeq(new_questions)
         setAllQues(newQuestions_)
+        setSuccessMsg("Sucesfully saved the changes!")
       })
       .catch((err) => {
         console.error("Updaing Form", err)
@@ -226,7 +233,15 @@ function FormEditor(
         </ReactSortable>
         <button
           className='px-3 py-1 bg-purple-200'
-          onClick={(event) => { event.preventDefault(); saveForm(queSeq, allQuestions, aboutForm) }}>
+          disabled={savingChanges}
+          onClick={(event) => { 
+            event.preventDefault(); 
+            setSaving(true)
+            saveForm(queSeq, allQuestions, aboutForm)
+              .finally(()=>{
+                setSaving(false)
+              })
+            }}>
           Submit
         </button>
         {/* {

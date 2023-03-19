@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { IAnsTypes, IQuestionForm } from '../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
@@ -20,10 +20,11 @@ const QuestionFormElement = ({
   }) => {
 
   const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
-  const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: false }>({
+  const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: boolean, numUploads: boolean }>({
     titleLen: false,
     optionsLen: false,
     optionsNum: false,
+    numUploads: false,
   })
   const changeAnsType = (prevType: IAnsTypes, selectedType: IAnsTypes) => {
     setChooseAnsTypeToggle(false)
@@ -44,10 +45,10 @@ const QuestionFormElement = ({
   return (
     <div
       onClick={(event) => { event.preventDefault(); setSelectedKey(queKey.toString()) }}
-      className={`w-full  pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
+      className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-      <div className='question-sort-handle w-full py-0.5 h-fit hover:cursor-grabbing flex relative items-center'>
+      <div className='question-sort-handle w-full h-fit hover:cursor-grabbing flex relative items-center'>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-fit mx-auto">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
@@ -224,7 +225,12 @@ function QuestionFooter(
   }
 ) {
   const [saveChangesLoading, setLoading] = useState<boolean>(false)
-
+  useEffect(() => {
+    if (saveChangesLoading) {
+      saveQuestion(queKey.toString(), question)
+    }
+  }, [saveChangesLoading])
+  // const saveChangesLoading = useRef<boolean>(false)
   return (
     <div className='px-4 mt-4'>
       <div className='w-full py-1  border-t border-t-gray-300 mt-2 flex  h-fit items-center space-x-6'>
@@ -297,13 +303,11 @@ function QuestionFooter(
         </div>
         {/* save changes */}
         <button
-          disabled={(question._id?.slice(0, 3) === 'new') || (question.savedChanges)}
+          disabled={(question._id?.slice(0, 3) === 'new') || (saveChangesLoading)}
           className={`w-28  hidden sm:block ${((question._id?.slice(0, 3) === 'new') || (question.savedChanges)) ? "bg-blue-100 text-gray-600" : "bg-blue-500 text-white"} rounded-md p-2 text-xs `}
           onClick={(event) => {
             event.preventDefault();
-            setLoading(true);
-            saveQuestion(queKey.toString(), question)
-              .finally(() => { setLoading(false) });
+            setLoading(true)
           }}
         >
           Save Changes
@@ -313,7 +317,13 @@ function QuestionFooter(
       <button
         disabled={(question._id?.slice(0, 3) === 'new') || (question.savedChanges)}
         className={`w-fit ml-auto mt-3 block sm:hidden ${((question._id?.slice(0, 3) === 'new') || (question.savedChanges)) ? "bg-blue-100 text-gray-600" : "bg-blue-500 text-white"} rounded-md p-2 text-xs `}
-        onClick={(event) => { event.preventDefault(); setLoading(true); saveQuestion(queKey.toString(), question) }}
+        onClick={(event) => {
+          event.preventDefault();
+          setLoading(true)
+          // saveChangesLoading.current = true
+          // saveQuestion(queKey.toString(), question)
+          //   .finally(() => { saveChangesLoading.current=false });
+        }}
       >
         {saveChangesLoading && <svg aria-hidden="true" role="status" className="inline w-4 h-4 mr-3 text-gray-200 animate-spin dark:text-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />

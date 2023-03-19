@@ -1,4 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google'
+import axios from 'axios';
 import React, { useEffect,  useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -19,7 +20,7 @@ const AuthPage = ({ authTypeToggle }: { authTypeToggle: 'login' | 'register' }) 
     onSuccess: (auth_res) => {
       const { code } = auth_res
       console.log("Sucessfully!", auth_res, code)
-      fetch(`${import.meta.env.VITE_API_URL.slice(0, -1)}/login-google`, {
+      fetch(`${import.meta.env.VITE_API_URL}/login-google`, {
         method: 'POST',
         credentials: 'include',
         mode: 'cors',
@@ -63,7 +64,7 @@ const AuthPage = ({ authTypeToggle }: { authTypeToggle: 'login' | 'register' }) 
 
     const options = {
       client_id: import.meta.env.VITE_Github_ClientId as string,
-      redirect_uri: "http://localhost:5173/login-github",// `${import.meta.env.BASE_URL}/login-github`,
+      redirect_uri: `${import.meta.env.BASE_URL}/login-github`,// `${import.meta.env.BASE_URL}/login-github`,
       scope: 'user:email',
       state: ((location.state as any)?.from?.pathname as string) || '/',
     };

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { IQuestionForm } from '../../../../types'
+import { IQuestionForm } from '../../../types'
 import { ReactSortable } from 'react-sortablejs'
 
 interface ItemType {
@@ -15,7 +15,7 @@ const MultipleChoice = (
       question: IQuestionForm,
       editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void
       isSelected: boolean,
-      setErrors: React.Dispatch<React.SetStateAction<{ titleLen: boolean; optionsLen: boolean; optionsNum: false; }>>
+      setErrors: React.Dispatch<React.SetStateAction<{ titleLen: boolean; optionsLen: boolean; optionsNum: boolean; numUploads:boolean}>>
     }) => {
 
   const [correctOptions, setCorrectOptions] = useState<boolean[]>([])
@@ -47,7 +47,7 @@ const MultipleChoice = (
   useEffect(() => {
     let queOptions = optionState.map((ele)=>{return ele.text})
 
-    console.log("New question!", { ...question, optionsArray: queOptions })
+    // console.log("New question!", { ...question, optionsArray: queOptions })
     editQuestion(queKey, { ...question, optionsArray: queOptions })
   }, [optionState])
   useEffect(()=>{
