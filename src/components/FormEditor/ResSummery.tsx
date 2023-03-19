@@ -14,6 +14,7 @@ const ResSummery = ({ formId }: { formId: string }) => {
         }
       })
       .catch((err)=>{
+        //@ts-ignore
         setSmry(undefined)
       })
   }, [])
