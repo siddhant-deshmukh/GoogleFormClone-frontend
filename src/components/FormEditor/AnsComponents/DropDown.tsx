@@ -25,16 +25,16 @@ function DropDown({ question, changeRes, queKey, queRes }: {
         </svg>
       </button>
 
-      <div id="dropdown" className={`z-10 ${(toggle) ? '' : 'hidden'} absolute  top-12 -left-7  md:left-0 bg-gray-100 divide-y divide-gray-100 rounded-lg shadow  dark:bg-gray-700  max-w-sm md:max-w-xl overflow-y-auto overflow-x-auto`}
+      <div id="dropdown" className={`z-10 ${(toggle) ? '' : 'hidden'} absolute  top-12 -left-7  md:left-0 bg-gray-100 divide-y divide-gray-100 rounded-lg shadow   max-w-sm md:max-w-xl overflow-y-auto overflow-x-auto`}
         style={{minWidth:'150px'}}
       >
         <ul
           style={{ maxHeight: '500px' }}
-          className="py-2 w-full text-sm text-gray-700 h-auto overflow-y-auto dark:text-gray-200" aria-labelledby="dropdownDefaultButton" >
+          className="py-2 w-full text-sm text-gray-700 h-auto overflow-y-auto " aria-labelledby="dropdownDefaultButton" >
           <li className='w-full'>
             <button
               onClick={(event) => { event.preventDefault(); changeRes(queKey, []); setToggle(false) }}
-              className="block w-full px-4 py-2 hover:bg-gray-200 text-center dark:hover:bg-gray-600 dark:hover:text-white">-Clear-</button>
+              className="block w-full px-4 py-2 hover:bg-gray-200 text-center ">-Clear-</button>
           </li>
           {
             question.optionsArray &&
@@ -43,7 +43,7 @@ function DropDown({ question, changeRes, queKey, queRes }: {
                 <li className='w-full' key={index}>
                   <button
                     onClick={(event) => { event.preventDefault(); changeRes(queKey, [str]); setToggle(false) }}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 dark:hover:text-white">{str}</button>
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-200 ">{str}</button>
                 </li>
               )
             })

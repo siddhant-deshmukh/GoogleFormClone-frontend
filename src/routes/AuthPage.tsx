@@ -31,16 +31,18 @@ const AuthPage = ({ authTypeToggle }: { authTypeToggle: 'login' | 'register' }) 
       }).then((res) => {
         if (res.status !== 201) {
           throw 'Some error occured!'
+        }else{
+          return res.json()
         }
-        return res.json()
       })
-        // .catch((err) => {
+      // .catch((err) => {
         //   setErrMsg('Google Authentication Failed! ' + JSON.stringify(err))
         //   alert('Google Login failed!  ')
         //   console.error("Error after onSucess callback ", err)
         // })
         .then((data) => {
           console.log('Here is the data', data)
+          window.location.href = `${import.meta.env.BASE_URL}?redirect=google`
           //window.location.href = `${import.meta.env.BASE_URL}?redirect=google`
         })
         .catch((err) => {

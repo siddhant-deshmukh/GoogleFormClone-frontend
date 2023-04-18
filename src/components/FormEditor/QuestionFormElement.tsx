@@ -6,19 +6,23 @@ import MultipleChoice from './QueAnsComponents/MultipleChoice'
 //: { [quetype : 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown' ] : {text:string, svg:JSX.Element} } 
 
 const QuestionFormElement = ({
-  queKey, question, editQuestion, isSelected, setSelectedKey, deleteQuestion, addQuestion, saveQuestion
+  queKey, question, editQuestion, isSelected, setSelectedKey, deleteQuestion, addQuestion, saveQuestion,selectQuestionRef
 }
   : {
+    
     queKey: string | Types.ObjectId,
     question: IQuestionForm,
-    isSelected: boolean,
+    isSelected: string,
     setSelectedKey: React.Dispatch<React.SetStateAction<string | null>>,
     editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void,
     deleteQuestion: (delKey: string | Types.ObjectId) => void,
     addQuestion: (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => void,
-    saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>
-  }) => {
+    saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>,
+    selectQuestionRef: React.MutableRefObject<HTMLDivElement | null>
 
+  }) => {
+  
+  
   const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
   const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: boolean, numUploads: boolean }>({
     titleLen: false,
@@ -44,17 +48,30 @@ const QuestionFormElement = ({
 
   return (
     <div
-      onClick={(event) => { event.preventDefault(); setSelectedKey(queKey.toString()) }}
-      className={`w-full pt-2 pb-4 px-3 bg-white rounded-lg  ${(isSelected) ? 'border-blue-500 border-l-4' : ' hover:cursor-pointer'} `}
+      id={`que_${queKey.toString()}`}
+      onClick={(event) => { 
+        event.preventDefault(); 
+        setSelectedKey(queKey.toString());                //getBoundingClientRect().top
+        const height = (document.getElementById(`que_${queKey.toString()}`)?.offsetTop || 100) 
+        document.documentElement.style.setProperty("--side-btn-height", `${height}px`);
+        console.log("\n\nHeight ",document.getElementById(`que_${queKey.toString()}`)?.getBoundingClientRect().top, height)
+        console.log("The property ",document.documentElement.style.getPropertyValue("--side-btn-height"))
+      }}
+      className={`w-full  pb-4 px-3 bg-white rounded-lg  ${(isSelected === 'true') ? 'border-blue-500 border-l-4 selected-question' : ' hover:cursor-pointer'} `}
+      ref={(isSelected === 'true')?selectQuestionRef:null}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-      <div className='question-sort-handle w-full h-fit hover:cursor-grabbing flex relative items-center'>
-
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-fit mx-auto">
+      <div className='question-sort-handle w-full  hover:cursor-move flex relative items-center'>
+      
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-3 h-6 mx-auto">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
         </svg>
       </div>
-
+      {/* {
+        question._id 
+      }
+      <div>{isSelected}</div> */}
       {/* ------------------------------ Shows errors  --------------------------------------*/}
       <div className=''>
         {
@@ -75,7 +92,7 @@ const QuestionFormElement = ({
 
       {/* ------------------------------ first row question title and question type  --------------------------------------*/}
       {
-        isSelected &&
+        isSelected === 'true' &&
         <div className='flex flex-col space-y-3 w-full '>
           <>
             <div className='flex w-full  items-center justify-between space-x-4'>
@@ -158,7 +175,7 @@ const QuestionFormElement = ({
         </div>
       }
       {
-        !isSelected &&
+        (!isSelected || isSelected === 'false') &&
         <div className=''>
           {question.title}
           {/*------------------------------------ Tag indeicating question state   
@@ -174,9 +191,13 @@ const QuestionFormElement = ({
             <span style={{ fontSize: '12px' }} className="bg-gray-100 text-gray-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">saved</span>
           }
           {
-            question._id?.slice(0, 3) !== 'new' && (!question.savedChanges) &&
+            question._id?.slice(0, 3) !== 'new' && (question.savedChanges === false) &&
             <span style={{ fontSize: '12px' }} className="bg-red-100 text-red-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">unsaved</span>
           }
+          {/* {
+            question._id?.slice(0, 3) !== 'new' && (question.savedChanges === undefined) &&
+            <span style={{ fontSize: '12px' }} className="bg-red-100 text-red-800 text-xs ml-2 font-medium  px-1  rounded dark:bg-blue-900 dark:text-blue-300">unsaved</span>
+          } */}
         </div>
       }
 
@@ -185,7 +206,7 @@ const QuestionFormElement = ({
       <div className='w-full flex flex-col space-y-2'>
         {
           (question.ans_type === 'mcq' || question.ans_type === 'checkbox' || question.ans_type === 'dropdown') &&
-          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} editQuestion={editQuestion} isSelected={isSelected} />
+          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} editQuestion={editQuestion} isSelected={(isSelected === 'true')} />
         }
         {
           (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
@@ -200,7 +221,7 @@ const QuestionFormElement = ({
       </div>
 
       {
-        isSelected &&
+        isSelected === 'true' &&
         <QuestionFooter
           queKey={queKey}
           question={question}

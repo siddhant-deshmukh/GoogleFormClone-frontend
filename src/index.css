@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --side-btn-height: 100px
+}
+.side-button {
+    left : calc(50% + 350px);
+    top : var(--side-btn-height);
+    /* top : clamp(5vh,var(--side-btn-height),95vh); */
+    transition: 0.25s;
+}
+@media (max-width : 800px){
+    .side-button {
+        left : calc(50% + 300px);
+        top : var(--side-btn-height);
+        /* top : clamp(5vh,var(--side-btn-height),95vh); */
+        transition: 0.25s;
+    }
+}
+/* @media (min-width : 450px){
+    .side-button {
+        right : 10px;
+        top : var(--side-btn-height);
+        transition: 0.25s;
+    }
+} */
+/* .selected-question {
+
+} */
 /* body.dragging,
 body.dragging * {
     cursor: move !important;

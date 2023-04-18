@@ -21,7 +21,7 @@ function App() {
       .then(res => res.json())
       .catch(err => console.error('While getting client', err))
       .finally(() => {setUserInfo(null); setInitialPageLoading(false); })
-      .then(data => {setUserInfo(data?.user); console.log({data},data.user);})
+      .then(data => {setUserInfo(data?.user);})
       .catch(err => {console.error('Modifying data', err); setUserInfo(null);})
       .finally(() => { setInitialPageLoading(false);})
   },[userInfo,setUserInfo])
