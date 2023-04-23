@@ -1,6 +1,5 @@
-import { useGoogleLogin } from '@react-oauth/google'
-import axios from 'axios';
 import React, { useEffect,  useState } from 'react'
+import { useGoogleLogin } from '@react-oauth/google'
 import { Link, useLocation } from 'react-router-dom'
 
 // --------------------------------------------------    4 components    ----------------------------------------------------
