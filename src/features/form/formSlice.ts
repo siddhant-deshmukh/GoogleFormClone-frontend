@@ -31,8 +31,8 @@ export const formSlice = createSlice({
       title: 'Untitled Form',
       desc: '',
     },
-    queSeq: [{id:"newId0"}],
-    allQuestions: {"newId0": defaultQuestion},
+    queSeq: [{ id: "newId0" }],
+    allQuestions: { "newId0": defaultQuestion },
     selectedKey: "newId0",
   } as FormSlice,
   reducers: {
@@ -40,10 +40,10 @@ export const formSlice = createSlice({
       state.formId = action.payload
     },
     setAboutForm: (state, action: PayloadAction<{ title?: string, desc?: string }>) => {
-      if(action.payload.title){
+      if (action.payload.title) {
         state.aboutForm.title = action.payload.title
       }
-      if(action.payload.desc){
+      if (action.payload.desc) {
         state.aboutForm.desc = action.payload.desc
       }
     },
@@ -57,16 +57,16 @@ export const formSlice = createSlice({
       state.selectedKey = action.payload
     },
 
-    addQuestion: (state, action: PayloadAction<{ prev_id?: string, newQue? :  IQuestionForm}>) => {
+    addQuestion: (state, action: PayloadAction<{ prev_id?: string, newQue?: IQuestionForm }>) => {
       if (state.queSeq.length > 20) return;
       const uniqueId = 'newId' + (new Date()).getTime();
 
-      
+
       //  changing all questions
       state.allQuestions = {
         ...state.allQuestions,
         [uniqueId]: {
-          ...((action.payload.newQue)?action.payload.newQue:defaultQuestion),
+          ...((action.payload.newQue) ? action.payload.newQue : defaultQuestion),
           _id: uniqueId,
           formId: state.formId
         }
@@ -96,7 +96,7 @@ export const formSlice = createSlice({
     },
     deleteQuestion: (state, action: PayloadAction<{ queKey: string }>) => {
       let x = state.queSeq.findIndex((ele) => ele.id === action.payload.queKey)
-      
+
       if (x > 0) {
         state.queSeq = state.queSeq.slice(0, x).concat(state.queSeq.slice(x + 1))
       } else if (x == 0) {
@@ -106,29 +106,21 @@ export const formSlice = createSlice({
       let allQuestions_ = { ...state.allQuestions }
       delete allQuestions_[action.payload.queKey]
       state.allQuestions = allQuestions_
-    },
-    beforeDelete: (state) => {
+
       let selectedKey = state.selectedKey
-      if(!selectedKey) return 
-      let x = state.queSeq.findIndex((ele) => ele.id === selectedKey)
-      
-      // let selectedKey = undefined
-      
-      console.log('\n before state.selectedKey ',state.selectedKey)
-      if (x === state.queSeq.length + 1) {
-        if (x === 1) {
-          selectedKey = undefined
+      if (state.queSeq.length > 0) {
+        if (x === state.queSeq.length) {
+          if (x === 1) {
+            selectedKey = undefined
+          } else {
+            selectedKey = state.queSeq[x - 1].id
+          }
         } else {
-          selectedKey = state.queSeq[x - 1].id
+          selectedKey = state.queSeq[x].id
         }
-      } else {
-        selectedKey = state.queSeq[x + 1].id
       }
       state.selectedKey = selectedKey
-      console.log('\n after state.selectedKey ',state.selectedKey)
-      console.log()
-      // return {...state, selectedKey}
-    } 
+    },
   }
 })
 
@@ -140,7 +132,6 @@ export const {
   setAllQuestions,
 
   addQuestion,
-  beforeDelete,
   deleteQuestion,
   editQuestion,
 } = formSlice.actions

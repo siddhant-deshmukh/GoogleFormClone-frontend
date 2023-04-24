@@ -17,7 +17,7 @@ export interface ItemType {
 //   group: " groupName",
 //   animation: 200,
 //   delayOnTouchStart: true,
-//   delay: 2,
+//   delay: 2, 
 // });
 
 function FormEditor(
@@ -31,19 +31,80 @@ function FormEditor(
   const [copyPaperLink, setCopyLink] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
-  const queSeq = useAppSelector((state)=> state.form.queSeq)
-  const allQuestions = useAppSelector((state)=> state.form.allQuestions)
-  const selectedKey = useAppSelector((state)=> state.form.selectedKey)
+  const queSeq = useAppSelector((state) => state.form.queSeq)
+  const allQuestions = useAppSelector((state) => state.form.allQuestions)
+  const selectedKey = useAppSelector((state) => state.form.selectedKey)
 
-  console.log('selectedKey',selectedKey)
+  const [newQuestion__,setToggleNewQues] = useState<boolean>(false)
+  // console.log('selectedKey', selectedKey)
+
+  useEffect(() => {
+
+    function handleDragStart(e : Event){
+      //@ts-ignore
+      e.srcElement?.classList.add('dragging')
+      console.log('meow',e)
+    }
+    function handleDragStop(e : Event){
+      //@ts-ignore
+      e.srcElement?.classList.remove('dragging')
+      console.log('meow',e)
+    }
+    const draggables = document.querySelectorAll('.draggable')
+    const mainList = document.getElementById('main-list')
+    console.log(draggables)
+    console.log(mainList)
+
+    draggables.forEach(draggable => {
+      draggable.addEventListener('dragstart', handleDragStart)
+
+      draggable.addEventListener('dragend', handleDragStop)
+    })
+
+
+    mainList?.addEventListener('dragover', e => {
+      e.preventDefault();
+      const afterElement = getDragAfterElement(mainList, e.clientY)
+      const draggable = document.querySelector('.dragging')
+      if(draggable && afterElement){
+        mainList.insertBefore(draggable, afterElement)
+      }
+    })
+
+    function getDragAfterElement(mainList: HTMLElement, y: number) {
+      const draggableElements = [...mainList.querySelectorAll('.draggable:not(.dragging)')]
+
+      let just_smaller = Number.NEGATIVE_INFINITY
+      let just_element = undefined
+      draggableElements.forEach((element)=>{
+        const box = element.getBoundingClientRect()
+        const offset = y - box.top -  box.height / 4
+        if (offset < 0 && offset > just_smaller) {
+          just_smaller = offset
+          just_element = element
+        }
+      })
+      return just_element
+    }
+
+    return () => {
+      draggables.forEach(draggable => {
+        draggable.removeEventListener('dragstart', handleDragStart)
+        draggable.removeEventListener('dragend', handleDragStop)
+      })
+    }
+  }, [newQuestion__])
 
   return (
     <div className='relative  my-2 flex px-0.5 space-x-2   w-full  max-w-[600px]  slg:max-w-[700px]  mx-auto '>
       <div className='w-full h-full  '>
+        {
+          JSON.stringify(queSeq)
+        }
         <TitleDescFormElement />
 
-        <div id="main-list" className='flex flex-col  my-3 space-y-2 w-full'>
-        {
+        <div id="main-list" className='flex flex-col duration-200  my-3 space-y-2 w-full'>
+          {
             allQuestions && queSeq &&
             queSeq.map((ele) => {
               let isSelected = (selectedKey === ele.id.toString()) ? 'true' : 'false'
@@ -83,7 +144,7 @@ function FormEditor(
       <div className='side-button absolute  hidden sm:flex flex-col space-y-2  w-fit py-2 px-1 rounded-lg h-20 bg-white  border border-gray-200'>
         <button
           className='w-fit mx-auto rounded-full p-0.5  hover:bg-gray-100'
-          onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})) }}>
+          onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev=>!prev) }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 rounded-full border-2 border-gray-500 ">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
           </svg>
@@ -94,9 +155,9 @@ function FormEditor(
             event.preventDefault();
             navigator.clipboard.writeText(window.location.href)
             setCopyLink(true)
-            setTimeout(()=>{
+            setTimeout(() => {
               setCopyLink(false)
-            },1000)
+            }, 1000)
           }}>
           {
             !copyPaperLink &&
@@ -121,7 +182,7 @@ function FormEditor(
       {/* Side Button to add new question in sm mode*/}
       <button
         className='w-fit sm:hidden fixed bottom-5 right-4 mx-auto rounded-full p-2 bg-purple-600 text-white hover:bg-purple-500'
-        onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})) }}>
+        onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev=>!prev)}}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
         </svg>
