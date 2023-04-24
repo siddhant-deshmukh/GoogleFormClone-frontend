@@ -2,27 +2,25 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { IAnsTypes, IQuestionForm } from '../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { addQuestion, beforeDelete, deleteQuestion, editQuestion, setSelectedKey } from '../../features/form/formSlice'
 
 //: { [quetype : 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown' ] : {text:string, svg:JSX.Element} } 
 
 const QuestionFormElement = ({
-  queKey, question, editQuestion, isSelected, setSelectedKey, deleteQuestion, addQuestion, saveQuestion,selectQuestionRef
+  queKey, question, isSelected, selectQuestionRef
 }
   : {
-    
     queKey: string | Types.ObjectId,
     question: IQuestionForm,
     isSelected: string,
-    setSelectedKey: React.Dispatch<React.SetStateAction<string | null>>,
-    editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void,
-    deleteQuestion: (delKey: string | Types.ObjectId) => void,
-    addQuestion: (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => void,
-    saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>,
     selectQuestionRef: React.MutableRefObject<HTMLDivElement | null>
 
   }) => {
-  
-  
+
+  const aboutForm = useAppSelector((state) => state.form.aboutForm)
+  const dispatch = useAppDispatch()
+
   const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
   const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: boolean, numUploads: boolean }>({
     titleLen: false,
@@ -35,12 +33,35 @@ const QuestionFormElement = ({
     if (prevType === selectedType) return;
     if (selectedType === 'checkbox' || selectedType === 'mcq' || selectedType === 'dropdown') {
       if (!(prevType === 'checkbox' || prevType === 'mcq' || prevType === 'dropdown')) {
-        editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: ['Option 1'], correct_ans: undefined })
+        // editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: ['Option 1'], correct_ans: undefined })
+        dispatch(editQuestion({
+          queKey: queKey.toString(),
+          newQue: {
+            ...question,
+            ans_type: selectedType,
+            optionsArray: ['Option 1'],
+            correct_ans: undefined
+          }
+        }))
       } else {
-        editQuestion(queKey, { ...question, ans_type: selectedType })
+        dispatch(editQuestion({
+          queKey: queKey.toString(),
+          newQue: {
+            ...question,
+            ans_type: selectedType,
+          }
+        }))
       }
     } else if (selectedType === 'short_ans' || selectedType === 'long_ans') {
-      editQuestion(queKey, { ...question, ans_type: selectedType, optionsArray: undefined, correct_ans: undefined })
+      dispatch(editQuestion({
+        queKey: queKey.toString(),
+        newQue: {
+          ...question,
+          ans_type: selectedType,
+          optionsArray: undefined,
+          correct_ans: undefined
+        }
+      }))
     } else {
 
     }
@@ -49,29 +70,32 @@ const QuestionFormElement = ({
   return (
     <div
       id={`que_${queKey.toString()}`}
-      onClick={(event) => { 
-        event.preventDefault(); 
-        setSelectedKey(queKey.toString());                //getBoundingClientRect().top
-        const height = (document.getElementById(`que_${queKey.toString()}`)?.offsetTop || 100) 
+      onClick={(event) => {
+        event.preventDefault();
+
+        if(isSelected === 'true') return;
+        dispatch(setSelectedKey(queKey.toString()))
+
+        const height = (document.getElementById(`que_${queKey.toString()}`)?.offsetTop || 100)
         document.documentElement.style.setProperty("--side-btn-height", `${height}px`);
-        console.log("\n\nHeight ",document.getElementById(`que_${queKey.toString()}`)?.getBoundingClientRect().top, height)
-        console.log("The property ",document.documentElement.style.getPropertyValue("--side-btn-height"))
+        // console.log("\n\nHeight ", document.getElementById(`que_${queKey.toString()}`)?.getBoundingClientRect().top, height)
+        // console.log("The property ", document.documentElement.style.getPropertyValue("--side-btn-height"))
       }}
       className={`w-full  pb-4 px-3 bg-white rounded-lg  ${(isSelected === 'true') ? 'border-blue-500 border-l-4 selected-question' : ' hover:cursor-pointer'} `}
-      ref={(isSelected === 'true')?selectQuestionRef:null}
+      ref={(isSelected === 'true') ? selectQuestionRef : null}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
       <div className='question-sort-handle w-full  hover:cursor-move flex relative items-center'>
-      
+
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-3 h-6 mx-auto">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
         </svg>
       </div>
-      {/* {
+      {
         question._id 
       }
-      <div>{isSelected}</div> */}
+      <div>{isSelected}</div>
       {/* ------------------------------ Shows errors  --------------------------------------*/}
       <div className=''>
         {
@@ -103,7 +127,14 @@ const QuestionFormElement = ({
                 value={question.title}
                 onChange={(event) => {
                   event.preventDefault();
-                  editQuestion(queKey, { ...question, title: event.target.value });
+
+                  dispatch(editQuestion({
+                    queKey: queKey.toString(),
+                    newQue: {
+                      ...question,
+                      title: event.target.value
+                    }
+                  }))
                   if (event.target.value.length > 50 || event.target.value.length < 3) {
                     setErrors((prev) => {
                       return { ...prev, titleLen: true }
@@ -170,7 +201,16 @@ const QuestionFormElement = ({
               className='text-xs border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
               placeholder={'Description'}
               value={question.desc}
-              onChange={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, desc: event.target.value }) }} />
+              onChange={(event) => {
+                event.preventDefault();
+                dispatch(editQuestion({
+                  queKey: queKey.toString(),
+                  newQue: {
+                    ...question,
+                    desc: event.target.value
+                  }
+                }))
+              }} />
           }
         </div>
       }
@@ -206,7 +246,7 @@ const QuestionFormElement = ({
       <div className='w-full flex flex-col space-y-2'>
         {
           (question.ans_type === 'mcq' || question.ans_type === 'checkbox' || question.ans_type === 'dropdown') &&
-          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} editQuestion={editQuestion} isSelected={(isSelected === 'true')} />
+          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} isSelected={(isSelected === 'true')} />
         }
         {
           (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
@@ -225,10 +265,6 @@ const QuestionFormElement = ({
         <QuestionFooter
           queKey={queKey}
           question={question}
-          editQuestion={editQuestion}
-          deleteQuestion={deleteQuestion}
-          addQuestion={addQuestion}
-          saveQuestion={saveQuestion}
         />
       }
     </div>
@@ -236,19 +272,17 @@ const QuestionFormElement = ({
 }
 
 function QuestionFooter(
-  { queKey, question, editQuestion, deleteQuestion, addQuestion, saveQuestion }: {
+  { queKey, question }: {
     queKey: string | Types.ObjectId,
     question: IQuestionForm,
-    editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void,
-    deleteQuestion: (delKey: string | Types.ObjectId) => void,
-    addQuestion: (after?: string | Types.ObjectId, newQuestion?: IQuestionForm) => void,
-    saveQuestion: (queKey: string, newQuestion: IQuestionForm) => Promise<void>
   }
 ) {
   const [saveChangesLoading, setLoading] = useState<boolean>(false)
+  const dispatch = useAppDispatch()
+
   useEffect(() => {
     if (saveChangesLoading) {
-      saveQuestion(queKey.toString(), question)
+      // saveQuestion(queKey.toString(), question)
     }
   }, [saveChangesLoading])
   // const saveChangesLoading = useRef<boolean>(false)
@@ -264,7 +298,16 @@ function QuestionFooter(
                   (question.correct_ans === undefined) &&
                   <button
                     className='flex space-x-2 text-green-700 font-medium text-sm items-center'
-                    onClick={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, correct_ans: [] }) }}>
+                    onClick={(event) => {
+                      event.preventDefault();
+                      dispatch(editQuestion({
+                        queKey: queKey.toString(),
+                        newQue: {
+                          ...question,
+                          correct_ans: []
+                        }
+                      }))
+                    }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                     </svg>
@@ -275,7 +318,16 @@ function QuestionFooter(
                   !(question.correct_ans === undefined) &&
                   <button
                     className='flex space-x-2 text-blue-500 font-medium text-sm items-center'
-                    onClick={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, correct_ans: undefined }) }}>
+                    onClick={(event) => {
+                      event.preventDefault();
+                      dispatch(editQuestion({
+                        queKey: queKey.toString(),
+                        newQue: {
+                          ...question,
+                          correct_ans: undefined
+                        }
+                      }))
+                    }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                     </svg>
@@ -289,14 +341,27 @@ function QuestionFooter(
             {/* copy */}
             <button
               className='h-fit'
-              onClick={(event) => { event.preventDefault(); addQuestion(queKey, question) }}>
+              onClick={(event) => {
+                event.preventDefault();
+                dispatch(addQuestion({
+                  prev_id : queKey.toString(),
+                  newQue : {...question}
+                }))
+              }}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.3} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
               </svg>
             </button>
             {/* delete */}
             <button
-              onClick={(event) => { event.preventDefault(); deleteQuestion(queKey) }}>
+              onClick={(event) => {
+                // event.preventDefault();
+                console.log("Meow")
+                // dispatch(setSelectedKey("newId1682343837795"))
+
+                dispatch(beforeDelete())
+                dispatch(deleteQuestion({queKey: queKey.toString()}))
+              }}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.3} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
               </svg>
@@ -309,13 +374,27 @@ function QuestionFooter(
               <span className=" text-xs font-medium text-gray-800 dark:text-gray-300">Required</span>
               <label
                 className="relative inline-flex items-center  cursor-pointer"
-                onClick={(event) => { event.preventDefault(); editQuestion(queKey, { ...question, required: !question.required }) }}
+                onClick={(event) => { 
+                  event.preventDefault(); 
+                  dispatch(editQuestion({
+                    queKey: queKey.toString(),
+                    newQue : {
+                      ...question,
+                      required: !question.required 
+                    }
+                  }))
+                  
+                }}
               >
                 <input
                   type="checkbox"
                   value=""
                   className="sr-only peer"
                   checked={question.required}
+                  // defaultChecked={question.required}
+                  onChange={(e)=>{
+                    e.preventDefault()
+                  }}
                 />
                 <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
               </label>
