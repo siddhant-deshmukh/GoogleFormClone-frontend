@@ -20,9 +20,11 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
   const [queListState, setQueListState] = useState<ItemType[]>([]);
 
   const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
+
   const [errMsg, setErrMsg] = useState<string>('')
   const [warnMsg, setWarnMsg] = useState<string>('')
   const [successMsg, setSuccessMsg] = useState<string>('')
+
   const selectQuestionRef = useRef<HTMLDivElement | null>(null)
 
 
@@ -101,6 +103,7 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
       scrollableDiv?.removeEventListener('scroll', EventFun)
     }
   },[])
+  
   return (
     <div className="flex  flex-col w-screen h-screen bg-purple-100 overflow-hidden" style={{ minWidth: '352px' }}>
       <div className='fixed top-0 left-0 z-20 w-full bg-white hidden sm:block'>

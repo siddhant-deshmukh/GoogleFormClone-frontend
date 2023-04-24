@@ -233,13 +233,7 @@ function FormEditor(
   useEffect(() => {
 
   }, [])
-  // console.log(allQuestions)
-  // useEffect(()=>{
-  //   console.log(queSeq)
-  //   const queList_ = queSeq.map((key)=>{return {id:key.toString()}})
-  //   setQueListState(queList_)
-  // },[])
-
+  
   return (
     <div className='relative  my-2 flex px-0.5 space-x-2   w-full  max-w-[600px]  slg:max-w-[700px]  mx-auto '>
       <div className='w-full h-full  '>
