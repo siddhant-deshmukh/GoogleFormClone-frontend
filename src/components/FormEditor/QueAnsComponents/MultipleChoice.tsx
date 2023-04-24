@@ -2,6 +2,8 @@ import { Types } from 'mongoose'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IQuestionForm } from '../../../types'
 import { ReactSortable } from 'react-sortablejs'
+import { useAppDispatch } from '../../../app/hooks';
+import { editQuestion } from '../../../features/form/formSlice';
 
 interface ItemType {
   id: number;
@@ -9,11 +11,10 @@ interface ItemType {
 }
 
 const MultipleChoice = (
-  { queKey, question, editQuestion, isSelected, setErrors }:
+  { queKey, question, isSelected, setErrors }:
     {
       queKey: string | Types.ObjectId,
       question: IQuestionForm,
-      editQuestion: (queKey: string | Types.ObjectId, newQuestion: IQuestionForm) => void
       isSelected: boolean,
       setErrors: React.Dispatch<React.SetStateAction<{ titleLen: boolean; optionsLen: boolean; optionsNum: boolean; numUploads:boolean}>>
     }) => {
@@ -22,6 +23,8 @@ const MultipleChoice = (
   const [optionState, setOptionsState] = useState<ItemType[]>([]);
   // const [queOptions, setQueOptions] = useState<string[]>(question.optionsArray || []);
   const sortableOptions = useRef(null);
+    
+  const dispatch = useAppDispatch()
 
   useMemo(() => {
     let oldCorrectOption = Array(question.optionsArray?.length).fill(false)
@@ -48,7 +51,14 @@ const MultipleChoice = (
     let queOptions = optionState.map((ele)=>{return ele.text})
 
     // console.log("New question!", { ...question, optionsArray: queOptions })
-    editQuestion(queKey, { ...question, optionsArray: queOptions })
+    dispatch(editQuestion({
+      queKey: queKey.toString(),
+      newQue: {
+        ...question,
+        optionsArray: queOptions
+      }
+    }))
+    
   }, [optionState])
   useEffect(()=>{
     let new_way = (question?.optionsArray || []).map((option,index)=>{
@@ -122,10 +132,13 @@ const MultipleChoice = (
                           new_correct_ans = new_correct_ans.slice(0, index).concat(new_correct_ans.slice(index + 1));
                         }
                       }
-                      editQuestion(queKey, {
-                        ...question,
-                        correct_ans: new_correct_ans
-                      })
+                      dispatch(editQuestion({
+                        queKey: queKey.toString(),
+                        newQue: {
+                          ...question,
+                          correct_ans: new_correct_ans
+                        }
+                      }))
                       // console.log("new_correct_ans :",new_correct_ans)
                     }}
                   >
@@ -150,7 +163,6 @@ const MultipleChoice = (
                     const arr_ = optionState?.slice() || []
                     if (arr_.length <= 1) return;
                     const newarr_ = arr_.slice(0, index).concat(arr_.slice(index + 1, arr_.length + 1))
-                    // editQuestion(queKey, { ...question, optionsArray: newarr_ })
                     setOptionsState(newarr_)
                   }}>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

@@ -8,59 +8,34 @@ import NavBar from '../components/NavBar';
 import FormEditor, { ItemType } from '../components/FormEditor';
 import FormPreview from '../components/FormPreview';
 import Res from '../components/FormEditor/Res';
+import { setFormId } from '../features/form/formSlice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { setErrMsg, setSucessMsg } from '../features/msgs/msgSlice';
 
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
 
 function EditForm({ userInfo }: { userInfo?: IUser }) {
 
   const { formId } = useParams()
-  const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: 'Untitled Form', desc: '' })
-  const [queSeq, setQueSeq] = useState<(Types.ObjectId | string)[]>([])
-  const [allQuestions, setAllQues] = useState<IAllFormQuestions | null>(null)
-  const [queListState, setQueListState] = useState<ItemType[]>([]);
 
-  const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
+  const queSeq = useAppSelector((state)=> state.form.queSeq)
+  const allQuestions = useAppSelector((state)=> state.form.allQuestions)
+  const selectedKey = useAppSelector((state)=> state.form.selectedKey)
 
-  const [errMsg, setErrMsg] = useState<string>('')
-  const [warnMsg, setWarnMsg] = useState<string>('')
-  const [successMsg, setSuccessMsg] = useState<string>('')
+  const errMsg = useAppSelector((state)=> state.msgs.errMsg)
+  const sucessMsg = useAppSelector((state)=> state.msgs.sucessMsg)
+  
 
+  const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')  
   const selectQuestionRef = useRef<HTMLDivElement | null>(null)
-
+  const dispatch = useAppDispatch()
 
   // ------------------------------------------------------------------------------------------------------------------
   // -------                           functions to add and edit questions     ----------------------------------------
   // ------------------------------------------------------------------------------------------------------------------
 
   useEffect(() => {
-    // console.log("formId", formId)
-    if (!formId) {
-      setAllQues(defaultAllQuestions)
-      setQueListState([{ id: "0" }])
-      return
-    }
-    axios.get(`${import.meta.env.VITE_API_URL}/f/${formId}?withQuestions=true`, { withCredentials: true })
-      .then((res) => {
-        const { data } = res
-        if (data) {
-          const formInfo: IForm = data.form
-          const allQ: IAllFormQuestions = data.questions
-          // console.log("Form data", formId, data)
-
-          const allQueList_ = formInfo.questions.map((queKey) => { return { id: queKey.toString() } })
-          setQueListState(allQueList_)
-          for (let ques in allQ) {
-            allQ[ques].savedChanges = true
-          }
-          setAllQues(allQ)
-          setAboutForm({ title: formInfo.title, desc: formInfo.desc })
-        }
-      }).catch((err) => {
-        //@ts-ignore
-        let { msg } = err.response?.data
-        // console.log(msg)
-        setErrMsg(msg || "Some error occured while getting questions and form!")
-      })
+    
   }, [formId])
 
 
@@ -110,22 +85,22 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
         <NavBar currentState={currentState} setCurrentState={setCurrentState} userInfo={userInfo} />
       </div>
       {
-        errMsg !== '' && <div className='absolute w-full block top-24 z-30'>
+         errMsg !== '' && <div className='absolute w-full block top-24 z-30'>
           <div className='px-4  top-0 w-full py-1 shadow-md border mb-4 z-30  max-w-md mx-auto flex items-center justify-between bg-red-100 dark:bg-gray-800'>
             <div className="text-sm text-red-800 rounded-lg  dark:text-red-400" role="alert">
               {errMsg}
             </div>
-            <button className='p-2 ml-auto ' onClick={(event) => { event.preventDefault(); setErrMsg('') }}>X</button>
+            <button className='p-2 ml-auto ' onClick={(event) => { event.preventDefault(); dispatch(setErrMsg('')) }}>X</button>
           </div>
         </div>
       }
       {
-        successMsg !== '' && <div className='absolute w-full block top-24 z-30'>
+        sucessMsg !== '' && <div className='absolute w-full block top-24 z-30'>
           <div className='px-4  top-0 w-full py-1 shadow-md border mb-4 z-30  max-w-md mx-auto flex items-center justify-between bg-blue-100 dark:bg-gray-800'>
             <div className="text-sm text-blue-800 rounded-lg  dark:text-blue-400" role="alert">
-              {successMsg}
+              {sucessMsg}
             </div>
-            <button className='p-2 ml-auto ' onClick={(event) => { event.preventDefault(); setSuccessMsg('') }}>X</button>
+            <button className='p-2 ml-auto ' onClick={(event) => { event.preventDefault(); dispatch(setSucessMsg('')) }}>X</button>
           </div>
         </div>
       }
@@ -181,24 +156,22 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
           <main
             className={` flex space-x-2  w-full  ${(currentState === 'Edit') ? 'block' : 'hidden'}`}
           >
-            <FormEditor aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions}
-              setAboutForm={setAboutForm} setQueSeq={setQueSeq} setAllQues={setAllQues} setErrMsg={setErrMsg}
-              queListState={queListState} setQueListState={setQueListState}
-              setSuccessMsg={setSuccessMsg} selectQuestionRef={selectQuestionRef}/>
+            <FormEditor formId={formId} selectQuestionRef={selectQuestionRef}/>
           </main>
         }
 
 
-        {
+        {/* {
           currentState === 'Preview' && <main className={` flex space-x-2 w-full ${(currentState === 'Preview') ? 'block' : 'hidden'}`}>
             <FormPreview
-              aboutForm={aboutForm} formId={formId} queSeq={queSeq} allQuestions={allQuestions} />
+              formId={formId}  />
           </main>
-        }
+        } */}
 
-        {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
-          <Res formId={formId} allQuestions={allQuestions} />
-        </main>}
+        {/* {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
+          <Res formId={formId}  />
+        </main>
+        } */}
       </div>
     </div>
   )
