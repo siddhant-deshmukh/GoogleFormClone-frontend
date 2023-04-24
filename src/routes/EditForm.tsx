@@ -28,6 +28,20 @@ const initialState : IEditFormState = {
 function EditForm({ userInfo }: { userInfo?: IUser }) {
 
   const { formId } = useParams()
+<<<<<<< HEAD
+=======
+  const [aboutForm, setAboutForm] = useState<{ title: string, desc?: string }>({ title: 'Untitled Form', desc: '' })
+  const [queSeq, setQueSeq] = useState<(Types.ObjectId | string)[]>([])
+  const [allQuestions, setAllQues] = useState<IAllFormQuestions | null>(null)
+  const [queListState, setQueListState] = useState<ItemType[]>([]);
+
+  const [currentState, setCurrentState] = useState<'Edit' | 'Preview' | 'Res'>('Edit')
+
+  const [errMsg, setErrMsg] = useState<string>('')
+  const [warnMsg, setWarnMsg] = useState<string>('')
+  const [successMsg, setSuccessMsg] = useState<string>('')
+
+>>>>>>> 1d6fc18 (okay os it is not functional but i think next their will)
   const selectQuestionRef = useRef<HTMLDivElement | null>(null)
   
   const [editFormState, dispatch] = useReducer(reducer_editform, {...initialState, formId})
@@ -115,8 +129,13 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
     return () => {
       scrollableDiv?.removeEventListener('scroll', EventFun)
     }
+<<<<<<< HEAD
   }, [])
 
+=======
+  },[])
+  
+>>>>>>> 1d6fc18 (okay os it is not functional but i think next their will)
   return (
     <div className="flex  flex-col w-screen h-screen bg-purple-100 overflow-hidden" style={{ minWidth: '352px' }}>
       <div className='fixed top-0 left-0 z-20 w-full bg-white hidden sm:block'>

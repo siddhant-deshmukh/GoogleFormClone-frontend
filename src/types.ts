@@ -24,6 +24,7 @@ export interface IAllFormQuestions {
     [id: string]: IQuestionForm
 }
 
+
 export interface IUserSnippet {
     name: string,
     bio?: string,
@@ -46,6 +47,7 @@ export interface IForm {
     endtime?: Date,
     questions: Types.ObjectId[]
 }
+
 export interface IFormSnippet {
     _id: Types.ObjectId,
     title: string,
