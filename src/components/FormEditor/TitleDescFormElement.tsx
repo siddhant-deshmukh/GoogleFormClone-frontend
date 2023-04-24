@@ -9,7 +9,7 @@ const TitleDescFormElement = () => {
 
   const [titleErr, setTitleErr] = useState<boolean>(aboutForm.title.length > 150 || aboutForm.title.length < 3)
   return (
-    <div className='flex flex-col space-y-3 w-full pt-2 pb-4 px-3 bg-white border-t-8 border-t-purple-800 border-l-4 rounded-lg border-blue-500'>
+    <div className='flex flex-col space-y-3 w-full  pt-2 pb-4 px-3 bg-white border-t-8 border-t-purple-800 border-l-4 rounded-lg border-blue-500'>
       {
         titleErr &&
         <div className='flex text-xs text-red-800 items-center pt-1'>

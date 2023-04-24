@@ -2,17 +2,11 @@ import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
 import { IAllFormQuestions, IForm, IUser } from '../types';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { Types } from 'mongoose'
 import NavBar from '../components/NavBar';
 import FormEditor, { ItemType } from '../components/FormEditor';
-import FormPreview from '../components/FormPreview';
-import Res from '../components/FormEditor/Res';
-import { setFormId } from '../features/form/formSlice';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setErrMsg, setSucessMsg } from '../features/msgs/msgSlice';
 
-const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
 
 function EditForm({ userInfo }: { userInfo?: IUser }) {
 
@@ -54,18 +48,18 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
         if(curr_pos){
           if(curr_pos < window_pos + 30){
             document.documentElement.style.setProperty("--side-btn-height",(window_pos + 30).toString()+"px")
-            console.log('\nset 1',     (window_pos + 30).toString()+"px",'\n')
+            // console.log('\nset 1',     (window_pos + 30).toString()+"px",'\n')
           }else if(curr_pos > window_pos + view_window_height - 200 ){
             document.documentElement.style.setProperty("--side-btn-height",(window_pos + view_window_height - 200).toString()+"px")
-            console.log('\nset 2',    (window_pos + view_window_height - 200).toString()+"px" ,'\n')
+            // console.log('\nset 2',    (window_pos + view_window_height - 200).toString()+"px" ,'\n')
           }else{
             document.documentElement.style.setProperty("--side-btn-height",(curr_pos).toString()+"px")
-            console.log('\nset 3',     (curr_pos).toString()+"px"  ,'\n')
+            // console.log('\nset 3',     (curr_pos).toString()+"px"  ,'\n')
           }
         }else{
           document.documentElement.style.setProperty("--side-btn-height",(window_pos + 30).toString()+"px")
         }
-        console.log('curr_pos',curr_pos, '\nwindow_pos' ,window_pos, '\nview_window_height : ',view_window_height,'\n',  document.documentElement.style.getPropertyValue("--side-btn-height"))
+        // console.log('curr_pos',curr_pos, '\nwindow_pos' ,window_pos, '\nview_window_height : ',view_window_height,'\n',  document.documentElement.style.getPropertyValue("--side-btn-height"))
         
         // if(curr_pos)
       }, 100);

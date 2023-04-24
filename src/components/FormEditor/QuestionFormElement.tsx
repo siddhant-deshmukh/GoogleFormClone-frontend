@@ -3,7 +3,7 @@ import { IAnsTypes, IQuestionForm } from '../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { addQuestion, beforeDelete, deleteQuestion, editQuestion, setSelectedKey } from '../../features/form/formSlice'
+import { addQuestion,  deleteQuestion, editQuestion, setSelectedKey } from '../../features/form/formSlice'
 
 //: { [quetype : 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown' ] : {text:string, svg:JSX.Element} } 
 
@@ -67,6 +67,8 @@ const QuestionFormElement = ({
     }
   }
 
+
+
   return (
     <div
       id={`que_${queKey.toString()}`}
@@ -76,16 +78,20 @@ const QuestionFormElement = ({
         if(isSelected === 'true') return;
         dispatch(setSelectedKey(queKey.toString()))
 
+        
         const height = (document.getElementById(`que_${queKey.toString()}`)?.offsetTop || 100)
         document.documentElement.style.setProperty("--side-btn-height", `${height}px`);
         // console.log("\n\nHeight ", document.getElementById(`que_${queKey.toString()}`)?.getBoundingClientRect().top, height)
         // console.log("The property ", document.documentElement.style.getPropertyValue("--side-btn-height"))
       }}
-      className={`w-full  pb-4 px-3 bg-white rounded-lg  ${(isSelected === 'true') ? 'border-blue-500 border-l-4 selected-question' : ' hover:cursor-pointer'} `}
+      draggable={true} 
+      className={`w-full container draggable pb-4 px-3 bg-white rounded-lg duration-100 ease-linear  ${(isSelected === 'true') ? 'border-blue-500 border-l-4 selected-question' : ' hover:cursor-pointer'} `}
       ref={(isSelected === 'true') ? selectQuestionRef : null}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-      <div className='question-sort-handle w-full  hover:cursor-move flex relative items-center'>
+      <div 
+        
+        className='question-sort-handle  w-full  hover:cursor-move flex relative items-center'>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-3 h-6 mx-auto">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
@@ -104,9 +110,9 @@ const QuestionFormElement = ({
             //@ts-ignore
             if (!queErrors[key]) return <div className='hidden' key={index}></div>
             return <div className='flex text-xs text-red-800 items-center pt-1' key={index}>
-              <svg aria-hidden="true" className="flex-shrink-0 inline w-3  h-3 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+              <svg aria-hidden="true" className="flex-shrink-0 inline w-3  h-3 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
               <div>
-                {/** @ts-ignore */}
+                {/** @ts-ignore */} 
                 {errors[key]}
               </div>
             </div>
@@ -359,7 +365,7 @@ function QuestionFooter(
                 console.log("Meow")
                 // dispatch(setSelectedKey("newId1682343837795"))
 
-                dispatch(beforeDelete())
+                // dispatch(beforeDelete())
                 dispatch(deleteQuestion({queKey: queKey.toString()}))
               }}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.3} stroke="currentColor" className="w-5 h-5">
