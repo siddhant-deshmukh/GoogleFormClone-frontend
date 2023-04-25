@@ -121,6 +121,29 @@ export const formSlice = createSlice({
       }
       state.selectedKey = selectedKey
     },
+    functionForSorting: (state, action: PayloadAction<{ oldIndex: number, newIndex: number, questionId?: string }>) => {
+
+      if (action.payload.questionId) {
+        if (state.allQuestions[action.payload.questionId] && state.allQuestions[action.payload.questionId].optionsArray) {
+          let optionsArray = state.allQuestions[action.payload.questionId].optionsArray
+          if (optionsArray) {
+            if (action.payload.oldIndex < 0 || action.payload.newIndex < 0 ||
+              action.payload.newIndex > optionsArray.length - 1 || action.payload.oldIndex > optionsArray.length - 1) return;
+            let value = optionsArray[action.payload.oldIndex]
+            let arr_ = optionsArray.slice(0, action.payload.oldIndex).concat(optionsArray.slice(action.payload.oldIndex + 1))
+            optionsArray = arr_.slice(0, action.payload.newIndex).concat([value, ...arr_.slice(action.payload.newIndex)])
+
+            state.allQuestions[action.payload.questionId].optionsArray = optionsArray
+          }
+        }
+      } else {
+        if (action.payload.oldIndex < 0 || action.payload.newIndex < 0 ||
+          action.payload.newIndex > state.queSeq.length - 1 || action.payload.oldIndex > state.queSeq.length - 1) return;
+        let value = state.queSeq[action.payload.oldIndex]
+        let arr_ = state.queSeq.slice(0, action.payload.oldIndex).concat(state.queSeq.slice(action.payload.oldIndex + 1))
+        state.queSeq = arr_.slice(0, action.payload.newIndex).concat([value, ...arr_.slice(action.payload.newIndex)])
+      }
+    },
   }
 })
 
@@ -134,6 +157,7 @@ export const {
   addQuestion,
   deleteQuestion,
   editQuestion,
+  functionForSorting,
 } = formSlice.actions
 
 export const selectedKey = (state: FormSlice) => state.selectedKey
