@@ -4,9 +4,17 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { IAllFormQuestions, IQuestionForm } from '../types'
 import QuestionFormElement from './FormEditor/QuestionFormElement'
 import TitleDescFormElement from './FormEditor/TitleDescFormElement'
-import { ReactSortable, Sortable } from 'react-sortablejs'
+
+import {
+  SortableContainer,
+  SortableElement,
+  SortableContainerProps,
+  SortableElementProps,
+  SortableHandle,
+} from 'react-sortable-hoc'
+
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import { addQuestion } from '../features/form/formSlice'
+import { addQuestion, functionForSorting } from '../features/form/formSlice'
 
 const defaultAllQuestions: IAllFormQuestions = { "0": { _id: "newId0", formId: undefined, title: 'Untitled Question', 'required': false, ans_type: 'mcq', optionsArray: ['Option 1'], correct_ans: undefined } }
 export interface ItemType {
@@ -35,75 +43,83 @@ function FormEditor(
   const allQuestions = useAppSelector((state) => state.form.allQuestions)
   const selectedKey = useAppSelector((state) => state.form.selectedKey)
 
-  const [newQuestion__,setToggleNewQues] = useState<boolean>(false)
+  const [newQuestion__, setToggleNewQues] = useState<boolean>(false)
   // console.log('selectedKey', selectedKey)
 
-  useEffect(() => {
-
-    function handleDragStart(e : Event){
-      //@ts-ignore
-      e.srcElement?.classList.add('dragging')
-      console.log('meow',e)
-    }
-    function handleDragStop(e : Event){
-      //@ts-ignore
-      e.srcElement?.classList.remove('dragging')
-      console.log('meow',e)
-    }
-    const draggables = document.querySelectorAll('.draggable')
-    const mainList = document.getElementById('main-list')
-    console.log(draggables)
-    console.log(mainList)
-
-    draggables.forEach(draggable => {
-      draggable.addEventListener('dragstart', handleDragStart)
-
-      draggable.addEventListener('dragend', handleDragStop)
-    })
 
 
-    mainList?.addEventListener('dragover', e => {
-      e.preventDefault();
-      const afterElement = getDragAfterElement(mainList, e.clientY)
-      const draggable = document.querySelector('.dragging')
-      if(draggable && afterElement){
-        mainList.insertBefore(draggable, afterElement)
-      }
-    })
 
-    function getDragAfterElement(mainList: HTMLElement, y: number) {
-      const draggableElements = [...mainList.querySelectorAll('.draggable:not(.dragging)')]
+  // useEffect(() => {
 
-      let just_smaller = Number.NEGATIVE_INFINITY
-      let just_element = undefined
-      draggableElements.forEach((element)=>{
-        const box = element.getBoundingClientRect()
-        const offset = y - box.top -  box.height / 4
-        if (offset < 0 && offset > just_smaller) {
-          just_smaller = offset
-          just_element = element
-        }
-      })
-      return just_element
-    }
+  //   function handleDragStart(e: Event) {
+  //     //@ts-ignore
+  //     e.srcElement?.classList.add('dragging')
+  //     console.log('meow', e)
+  //   }
+  //   function handleDragStop(e: Event) {
+  //     //@ts-ignore
+  //     e.srcElement?.classList.remove('dragging')
+  //     console.log('meow', e)
+  //   }
+  //   const draggables = document.querySelectorAll('.draggable')
+  //   const mainList = document.getElementById('main-list')
+  //   console.log(draggables)
+  //   console.log(mainList)
 
-    return () => {
-      draggables.forEach(draggable => {
-        draggable.removeEventListener('dragstart', handleDragStart)
-        draggable.removeEventListener('dragend', handleDragStop)
-      })
-    }
-  }, [newQuestion__])
+  //   draggables.forEach(draggable => {
+  //     draggable.addEventListener('dragstart', handleDragStart)
+
+  //     draggable.addEventListener('dragend', handleDragStop)
+  //   })
+
+
+  //   mainList?.addEventListener('dragover', e => {
+  //     e.preventDefault();
+  //     const afterElement = getDragAfterElement(mainList, e.clientY)
+  //     const draggable = document.querySelector('.dragging')
+  //     if (draggable && afterElement) {
+  //       mainList.insertBefore(draggable, afterElement)
+  //     }
+  //   })
+
+  //   function getDragAfterElement(mainList: HTMLElement, y: number) {
+  //     const draggableElements = [...mainList.querySelectorAll('.draggable:not(.dragging)')]
+
+  //     let just_smaller = Number.NEGATIVE_INFINITY
+  //     let just_element = undefined
+  //     draggableElements.forEach((element) => {
+  //       const box = element.getBoundingClientRect()
+  //       const offset = y - box.top - box.height / 4
+  //       if (offset < 0 && offset > just_smaller) {
+  //         just_smaller = offset
+  //         just_element = element
+  //       }
+  //     })
+  //     return just_element
+  //   }
+
+  //   return () => {
+  //     draggables.forEach(draggable => {
+  //       draggable.removeEventListener('dragstart', handleDragStart)
+  //       draggable.removeEventListener('dragend', handleDragStop)
+  //     })
+  //   }
+  // }, [newQuestion__])
+
+
 
   return (
     <div className='relative  my-2 flex px-0.5 space-x-2   w-full  max-w-[600px]  slg:max-w-[700px]  mx-auto '>
       <div className='w-full h-full  '>
-        {
+        {/* {
           JSON.stringify(queSeq)
-        }
+        } */}
         <TitleDescFormElement />
 
-        <div id="main-list" className='flex flex-col duration-200  my-3 space-y-2 w-full'>
+
+        <QuestionList queSeq={queSeq} allQuestions={allQuestions} selectedKey={selectedKey} selectQuestionRef={selectQuestionRef}/>
+
+        {/* <div id="main-list" className='flex flex-col duration-200  my-3 space-y-2 w-full'>
           {
             allQuestions && queSeq &&
             queSeq.map((ele) => {
@@ -120,7 +136,7 @@ function FormEditor(
               )
             })
           }
-        </div>
+        </div> */}
 
         <button
           className='px-3 py-1 bg-purple-200 '
@@ -135,16 +151,16 @@ function FormEditor(
           }}>
           Submit
         </button>
-        {/* {
-          JSON.stringify(queSeq)
-        } */}
+        {
+          JSON.stringify(allQuestions)
+        }
       </div>
 
       {/* Side Button to add new question */}
       <div className='side-button absolute  hidden sm:flex flex-col space-y-2  w-fit py-2 px-1 rounded-lg h-20 bg-white  border border-gray-200'>
         <button
           className='w-fit mx-auto rounded-full p-0.5  hover:bg-gray-100'
-          onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev=>!prev) }}>
+          onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev => !prev) }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 rounded-full border-2 border-gray-500 ">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
           </svg>
@@ -182,7 +198,7 @@ function FormEditor(
       {/* Side Button to add new question in sm mode*/}
       <button
         className='w-fit sm:hidden fixed bottom-5 right-4 mx-auto rounded-full p-2 bg-purple-600 text-white hover:bg-purple-500'
-        onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev=>!prev)}}>
+        onClick={(event) => { event.preventDefault(); dispatch(addQuestion({})); setToggleNewQues(prev => !prev) }}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
         </svg>
@@ -201,6 +217,81 @@ function FormEditor(
       </button>
 
     </div>
+  )
+}
+
+
+interface ISortableItem extends SortableElementProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface ISortableContainer extends SortableContainerProps {
+  children: React.ReactNode
+  className?: string
+}
+
+const QuestionList = ({ queSeq, allQuestions, selectedKey, selectQuestionRef }: {
+  queSeq: {
+    id: string;
+    index?: number | undefined;
+  }[],
+  allQuestions: IAllFormQuestions,
+  selectedKey: string | undefined,
+  selectQuestionRef: React.MutableRefObject<HTMLDivElement | null>
+}) => {
+  
+
+  const dispatch = useAppDispatch()
+
+
+
+
+  console.log("Meow!!!")
+  const DndItem: React.ComponentClass<ISortableItem, any> = SortableElement(
+    ({ children, className }: { children: React.ReactNode; className: string }) => (
+      <div className={className || ''}>{children}</div>
+    )
+  )
+
+  const DndList: React.ComponentClass<ISortableContainer, any> = SortableContainer(
+    ({ children, className }: { children: React.ReactNode; className: string }) => {
+      return <div className={className || ''}>{children}</div>
+    }
+  )
+
+  const onSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
+    // setState(arrayMoveImmutable(state, oldIndex, newIndex))
+    dispatch(functionForSorting({ oldIndex, newIndex }))
+  }
+
+  return (
+
+    <DndList
+      lockAxis="y"
+      lockToContainerEdges={true}
+      useDragHandle
+      onSortEnd={onSortEnd}
+      className="itemsContainer"
+    >
+      {queSeq.map((ele: any, index: number) => {
+        let isSelected = (selectedKey === ele.id.toString()) ? 'true' : 'false'
+        if (!allQuestions[ele.id.toString()]) return <></>
+
+        return (
+          <DndItem key={ele.id} index={index} className="item my-2">
+            <QuestionFormElement
+              key={ele.id}
+              queKey={ele.id}
+              question={allQuestions[ele.id.toString()]}
+              isSelected={isSelected}
+              selectQuestionRef={selectQuestionRef}
+            />
+          </DndItem>
+        )
+      })}
+    </DndList>
+
   )
 }
 

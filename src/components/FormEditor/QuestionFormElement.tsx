@@ -3,23 +3,27 @@ import { IAnsTypes, IQuestionForm } from '../../types'
 import { Types } from 'mongoose'
 import MultipleChoice from './QueAnsComponents/MultipleChoice'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { addQuestion,  deleteQuestion, editQuestion, setSelectedKey } from '../../features/form/formSlice'
+import { addQuestion, deleteQuestion, editQuestion, setSelectedKey } from '../../features/form/formSlice'
+import { SortableHandle } from 'react-sortable-hoc'
 
 //: { [quetype : 'short_ans' | 'long_ans' | 'mcq' | 'checkbox' | 'dropdown' ] : {text:string, svg:JSX.Element} } 
-
-const QuestionFormElement = ({
-  queKey, question, isSelected, selectQuestionRef
+interface ISortableHandleElement {
+  children: React.ReactNode
+  className?: string
 }
-  : {
-    queKey: string | Types.ObjectId,
-    question: IQuestionForm,
-    isSelected: string,
-    selectQuestionRef: React.MutableRefObject<HTMLDivElement | null>
 
-  }) => {
+const QuestionFormElement = ({ queKey, question, isSelected, selectQuestionRef }: {
+  queKey: string | Types.ObjectId,
+  question: IQuestionForm,
+  isSelected: string,
+  selectQuestionRef: React.MutableRefObject<HTMLDivElement | null>
+}) => {
 
-  const aboutForm = useAppSelector((state) => state.form.aboutForm)
+
+  // const aboutForm = useAppSelector((state) => state.form.aboutForm)
   const dispatch = useAppDispatch()
+
+  console.log("Key!!!", queKey)
 
   const [chooseAnsTypeToggle, setChooseAnsTypeToggle] = useState<boolean>(false)
   const [queErrors, setErrors] = useState<{ titleLen: boolean, optionsLen: boolean, optionsNum: boolean, numUploads: boolean }>({
@@ -67,6 +71,11 @@ const QuestionFormElement = ({
     }
   }
 
+  const DndTrigger: React.ComponentClass<ISortableHandleElement, any> = SortableHandle(
+    ({ children, className }: { children: React.ReactNode; className: string }) => (
+      <div className={className || ''}>{children}</div>
+    )
+  )
 
 
   return (
@@ -75,33 +84,27 @@ const QuestionFormElement = ({
       onClick={(event) => {
         event.preventDefault();
 
-        if(isSelected === 'true') return;
+        if (isSelected === 'true') return;
         dispatch(setSelectedKey(queKey.toString()))
 
-        
+
         const height = (document.getElementById(`que_${queKey.toString()}`)?.offsetTop || 100)
         document.documentElement.style.setProperty("--side-btn-height", `${height}px`);
         // console.log("\n\nHeight ", document.getElementById(`que_${queKey.toString()}`)?.getBoundingClientRect().top, height)
         // console.log("The property ", document.documentElement.style.getPropertyValue("--side-btn-height"))
       }}
-      draggable={true} 
+      // draggable={true}
       className={`w-full container draggable pb-4 px-3 bg-white rounded-lg duration-100 ease-linear  ${(isSelected === 'true') ? 'border-blue-500 border-l-4 selected-question' : ' hover:cursor-pointer'} `}
       ref={(isSelected === 'true') ? selectQuestionRef : null}
     >
       {/* ------------------------------ Later will be used to sort list  --------------------------------------*/}
-      <div 
-        
+      <DndTrigger
         className='question-sort-handle  w-full  hover:cursor-move flex relative items-center'>
-
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-3 h-6 mx-auto">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
         </svg>
-      </div>
-      {
-        question._id 
-      }
-      <div>{isSelected}</div>
+      </DndTrigger>
       {/* ------------------------------ Shows errors  --------------------------------------*/}
       <div className=''>
         {
@@ -112,7 +115,7 @@ const QuestionFormElement = ({
             return <div className='flex text-xs text-red-800 items-center pt-1' key={index}>
               <svg aria-hidden="true" className="flex-shrink-0 inline w-3  h-3 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
               <div>
-                {/** @ts-ignore */} 
+                {/** @ts-ignore */}
                 {errors[key]}
               </div>
             </div>
@@ -252,7 +255,7 @@ const QuestionFormElement = ({
       <div className='w-full flex flex-col space-y-2'>
         {
           (question.ans_type === 'mcq' || question.ans_type === 'checkbox' || question.ans_type === 'dropdown') &&
-          <MultipleChoice queKey={queKey} setErrors={setErrors} question={question} isSelected={(isSelected === 'true')} />
+          <MultipleChoice queKey={queKey} question={question} isSelected={(isSelected === 'true')} />
         }
         {
           (question.ans_type === 'short_ans' || question.ans_type === 'long_ans') &&
@@ -350,8 +353,8 @@ function QuestionFooter(
               onClick={(event) => {
                 event.preventDefault();
                 dispatch(addQuestion({
-                  prev_id : queKey.toString(),
-                  newQue : {...question}
+                  prev_id: queKey.toString(),
+                  newQue: { ...question }
                 }))
               }}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.3} stroke="currentColor" className="w-5 h-5">
@@ -362,11 +365,11 @@ function QuestionFooter(
             <button
               onClick={(event) => {
                 // event.preventDefault();
-                console.log("Meow")
+                console.log("Meow hrere")
                 // dispatch(setSelectedKey("newId1682343837795"))
 
                 // dispatch(beforeDelete())
-                dispatch(deleteQuestion({queKey: queKey.toString()}))
+                dispatch(deleteQuestion({ queKey: queKey.toString() }))
               }}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.3} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -380,16 +383,16 @@ function QuestionFooter(
               <span className=" text-xs font-medium text-gray-800 dark:text-gray-300">Required</span>
               <label
                 className="relative inline-flex items-center  cursor-pointer"
-                onClick={(event) => { 
-                  event.preventDefault(); 
+                onClick={(event) => {
+                  event.preventDefault();
                   dispatch(editQuestion({
                     queKey: queKey.toString(),
-                    newQue : {
+                    newQue: {
                       ...question,
-                      required: !question.required 
+                      required: !question.required
                     }
                   }))
-                  
+
                 }}
               >
                 <input
@@ -398,7 +401,7 @@ function QuestionFooter(
                   className="sr-only peer"
                   checked={question.required}
                   // defaultChecked={question.required}
-                  onChange={(e)=>{
+                  onChange={(e) => {
                     e.preventDefault()
                   }}
                 />
@@ -504,5 +507,14 @@ const errors: { titleLen: string, optionsLen: string, optionsNum: string } = {
   optionsNum: 'their can be 50 options atmost'
 }
 
-export default React.memo(QuestionFormElement)
 
+export default QuestionFormElement
+
+
+
+/***
+ 
+
+
+
+ */
