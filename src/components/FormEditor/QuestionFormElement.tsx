@@ -508,7 +508,7 @@ const errors: { titleLen: string, optionsLen: string, optionsNum: string } = {
 }
 
 
-export default QuestionFormElement
+export default React.memo(QuestionFormElement)
 
 
 

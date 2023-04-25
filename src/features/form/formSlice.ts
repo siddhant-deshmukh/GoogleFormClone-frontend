@@ -144,6 +144,43 @@ export const formSlice = createSlice({
         state.queSeq = arr_.slice(0, action.payload.newIndex).concat([value, ...arr_.slice(action.payload.newIndex)])
       }
     },
+    functionForOptionEdit: (state, action: PayloadAction<{ index?: number, text?: string, queKey: string, newOpt? : true, delOpt?:true }>) => {
+      // console.log(state.allQuestions[action.payload.queKey].optionsArray[action.payload.index], index)
+      // console.log(action.payload.index,action.payload.text,action.payload.queKey,action.payload.newOpt)
+      if(action.payload.newOpt){
+        if(state.allQuestions[action.payload.queKey]){
+          let optArray = state.allQuestions[action.payload.queKey].optionsArray
+          if(optArray && Array.isArray(optArray) ){
+            let text = action.payload.text || `Option ${optArray.length + 1}`
+            state.allQuestions[action.payload.queKey].optionsArray = [...optArray, text]
+          }else{
+            state.allQuestions[action.payload.queKey].optionsArray = ['Option 1']
+          }
+        }
+      }else if(action.payload.delOpt){
+        let optArray = state.allQuestions[action.payload.queKey].optionsArray
+        if(optArray && Array.isArray(optArray) && typeof action.payload.index === 'number'){
+          if(action.payload.index === 0){
+            optArray = optArray.slice(1)
+          }else{
+            optArray = optArray.slice(0,action.payload.index).concat(optArray.slice(action.payload.index+1))
+          }
+          state.allQuestions[action.payload.queKey].optionsArray = optArray
+        }
+
+      } else if(typeof action.payload.index === 'number'){
+        // console.log(action.payload.queKey, state.allQuestions[action.payload.queKey],state.allQuestions[action.payload.queKey].optionsArray,action.payload.index ,(state.allQuestions[action.payload.queKey].optionsArray?.length || -1))
+        if (action.payload.queKey && state.allQuestions[action.payload.queKey] &&
+          state.allQuestions[action.payload.queKey].optionsArray &&
+          action.payload.index < (state.allQuestions[action.payload.queKey].optionsArray?.length || -1)
+        ) {
+          // console.log(action.payload.index,action.payload.text,action.payload.queKey,action.payload.newOpt)
+          //@ts-ignore
+          state.allQuestions[action.payload.queKey].optionsArray[action.payload.index] = action.payload.text
+          
+        }
+      }
+    }
   }
 })
 
@@ -158,6 +195,7 @@ export const {
   deleteQuestion,
   editQuestion,
   functionForSorting,
+  functionForOptionEdit,
 } = formSlice.actions
 
 export const selectedKey = (state: FormSlice) => state.selectedKey
