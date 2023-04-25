@@ -1,14 +1,14 @@
 import { Types } from 'mongoose'
 import  { useCallback,  useMemo, useState } from 'react'
 import { IAllFormQuestions, IQueResList } from '../types'
-import QuestionElement from './FormEditor/QuestionElement'
-import TitleDescFormElement from './FormEditor/TitleDescFormElement'
+import QuestionElement from './FormEditor/question/QuestionElement'
+import TitleDescFormElement from './FormEditor/FormTitleDesc'
 
 const defalutQueResList = new Map()
 
 function FormPreview(
   { aboutForm, formId, queSeq, allQuestions }: {
-    aboutForm: { title: string, desc?: string | undefined },
+    aboutForm: { title: string, desc: string },
     formId: string | undefined,
     queSeq: (string | Types.ObjectId)[],
     allQuestions: IAllFormQuestions | null,
@@ -103,7 +103,7 @@ function FormPreview(
           JSON.stringify(quesReses)
         }
         <hr/> */}
-        <TitleDescFormElement aboutForm={aboutForm} />
+        <TitleDescFormElement />
         <div
           id='sortable'
           className='flex flex-col  my-3 space-y-2 w-full '

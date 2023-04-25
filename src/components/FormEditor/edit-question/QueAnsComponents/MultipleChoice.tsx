@@ -1,45 +1,10 @@
 import { Types } from 'mongoose'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { IQuestionForm } from '../../../types'
-import { ReactSortable } from 'react-sortablejs'
-import { useAppDispatch } from '../../../app/hooks';
-import { editQuestion, functionForOptionEdit, functionForSorting } from '../../../features/form/formSlice';
-import { SortableContainer, SortableContainerProps, SortableElement, SortableElementProps, SortableHandle } from 'react-sortable-hoc';
 
-interface ItemType {
-  id: number;
-  text: string;
-}
-interface ISortableItem extends SortableElementProps {
-  children: React.ReactNode
-  className?: string
-}
-
-interface ISortableContainer extends SortableContainerProps {
-  children: React.ReactNode
-  className?: string
-}
-interface ISortableHandleElement {
-  children: React.ReactNode
-  className?: string
-}
-const DndItem: React.ComponentClass<ISortableItem, any> = SortableElement(
-  ({ children, className }: { children: React.ReactNode; className: string }) => (
-    <div className={className || ''}>{children}</div>
-  )
-)
-
-const DndList: React.ComponentClass<ISortableContainer, any> = SortableContainer(
-  ({ children, className }: { children: React.ReactNode; className: string }) => {
-    return <div className={className || ''}>{children}</div>
-  }
-)
-
-const DndTrigger: React.ComponentClass<ISortableHandleElement, any> = SortableHandle(
-  ({ children, className }: { children: React.ReactNode; className: string }) => (
-    <div className={className || ''}>{children}</div>
-  )
-)
+import { IQuestionForm } from '../../../../types'
+import { useAppDispatch } from '../../../../app/hooks';
+import { DndItem, DndList, DndTrigger } from '../../react-sortable-hoc';
+import { editQuestion, functionForOptionEdit, functionForSorting } from '../../../../features/form/formSlice';
 
 const MultipleChoice = (
   { queKey, question, isSelected }:
@@ -51,8 +16,7 @@ const MultipleChoice = (
 
   const [correctOptions, setCorrectOptions] = useState<boolean[]>([])
   const [optionState, setOptionsState] = useState<({ _id: string, text: string })[]>([]);
-  // const [queOptions, setQueOptions] = useState<string[]>(question.optionsArray || []);
-
+  
   const dispatch = useAppDispatch()
 
   useMemo(() => {
@@ -72,23 +36,6 @@ const MultipleChoice = (
 
   }, [question.correct_ans, question.optionsArray])
 
-  // useEffect(() => {
-  //   console.log("New question!", { ...question, optionsArray: queOptions })
-  //   editQuestion(queKey, { ...question, optionsArray: queOptions })
-  // }, [queOptions])
-  // useEffect(() => {
-  //   let queOptions = optionState.map((ele) => { return ele.text })
-
-  //   // console.log("New question!", { ...question, optionsArray: queOptions })
-  //   dispatch(editQuestion({
-  //     queKey: queKey.toString(),
-  //     newQue: {
-  //       ...question,
-  //       optionsArray: queOptions
-  //     }
-  //   }))
-
-  // }, [optionState])
   useEffect(() => {
     let new_way = (question?.optionsArray || []).map((option, index) => {
       return { _id: index.toString(), text: option }
@@ -97,7 +44,6 @@ const MultipleChoice = (
   }, [])
 
 
-  console.log("Multiple choice")
   const onSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
     setOptionsState((prev) => {
       let value = prev[oldIndex]

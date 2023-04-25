@@ -1,5 +1,5 @@
 import React from 'react'
-import { IQuestionForm } from '../../../types'
+import { IQuestionForm } from '../../../../types'
 
 
 function MCQ(

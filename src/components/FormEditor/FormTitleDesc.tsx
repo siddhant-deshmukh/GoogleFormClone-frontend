@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setAboutForm } from '../../features/form/formSlice'
 
-const TitleDescFormElement = () => {
+const FormTitleDesc = () => {
 
   const aboutForm = useAppSelector((state)=> state.form.aboutForm)
   const dispatch = useAppDispatch()
@@ -47,4 +47,4 @@ const TitleDescFormElement = () => {
   )
 }
 
-export default TitleDescFormElement
+export default FormTitleDesc

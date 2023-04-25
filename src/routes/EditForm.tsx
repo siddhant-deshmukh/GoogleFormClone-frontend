@@ -3,7 +3,7 @@ import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { IAllFormQuestions, IForm, IUser } from '../types';
 import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import FormEditor, { ItemType } from '../components/FormEditor';
+import FormEditor from '../components/FormEditor/index';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setErrMsg, setSucessMsg } from '../features/msgs/msgSlice';
 
