@@ -44,67 +44,6 @@ function FormEditor(
   const selectedKey = useAppSelector((state) => state.form.selectedKey)
 
   const [newQuestion__, setToggleNewQues] = useState<boolean>(false)
-  // console.log('selectedKey', selectedKey)
-
-
-
-
-  // useEffect(() => {
-
-  //   function handleDragStart(e: Event) {
-  //     //@ts-ignore
-  //     e.srcElement?.classList.add('dragging')
-  //     console.log('meow', e)
-  //   }
-  //   function handleDragStop(e: Event) {
-  //     //@ts-ignore
-  //     e.srcElement?.classList.remove('dragging')
-  //     console.log('meow', e)
-  //   }
-  //   const draggables = document.querySelectorAll('.draggable')
-  //   const mainList = document.getElementById('main-list')
-  //   console.log(draggables)
-  //   console.log(mainList)
-
-  //   draggables.forEach(draggable => {
-  //     draggable.addEventListener('dragstart', handleDragStart)
-
-  //     draggable.addEventListener('dragend', handleDragStop)
-  //   })
-
-
-  //   mainList?.addEventListener('dragover', e => {
-  //     e.preventDefault();
-  //     const afterElement = getDragAfterElement(mainList, e.clientY)
-  //     const draggable = document.querySelector('.dragging')
-  //     if (draggable && afterElement) {
-  //       mainList.insertBefore(draggable, afterElement)
-  //     }
-  //   })
-
-  //   function getDragAfterElement(mainList: HTMLElement, y: number) {
-  //     const draggableElements = [...mainList.querySelectorAll('.draggable:not(.dragging)')]
-
-  //     let just_smaller = Number.NEGATIVE_INFINITY
-  //     let just_element = undefined
-  //     draggableElements.forEach((element) => {
-  //       const box = element.getBoundingClientRect()
-  //       const offset = y - box.top - box.height / 4
-  //       if (offset < 0 && offset > just_smaller) {
-  //         just_smaller = offset
-  //         just_element = element
-  //       }
-  //     })
-  //     return just_element
-  //   }
-
-  //   return () => {
-  //     draggables.forEach(draggable => {
-  //       draggable.removeEventListener('dragstart', handleDragStart)
-  //       draggable.removeEventListener('dragend', handleDragStop)
-  //     })
-  //   }
-  // }, [newQuestion__])
 
 
 
@@ -152,7 +91,7 @@ function FormEditor(
           Submit
         </button>
         {
-          JSON.stringify(allQuestions)
+          JSON.stringify(queSeq)
         }
       </div>
 
@@ -230,6 +169,17 @@ interface ISortableContainer extends SortableContainerProps {
   children: React.ReactNode
   className?: string
 }
+const DndItem: React.ComponentClass<ISortableItem, any> = SortableElement(
+  ({ children, className }: { children: React.ReactNode; className: string }) => (
+    <div className={className || ''}>{children}</div>
+  )
+)
+
+const DndList: React.ComponentClass<ISortableContainer, any> = SortableContainer(
+  ({ children, className }: { children: React.ReactNode; className: string }) => {
+    return <div className={className || ''}>{children}</div>
+  }
+)
 
 const QuestionList = ({ queSeq, allQuestions, selectedKey, selectQuestionRef }: {
   queSeq: {
@@ -248,17 +198,7 @@ const QuestionList = ({ queSeq, allQuestions, selectedKey, selectQuestionRef }: 
 
 
   console.log("Meow!!!")
-  const DndItem: React.ComponentClass<ISortableItem, any> = SortableElement(
-    ({ children, className }: { children: React.ReactNode; className: string }) => (
-      <div className={className || ''}>{children}</div>
-    )
-  )
-
-  const DndList: React.ComponentClass<ISortableContainer, any> = SortableContainer(
-    ({ children, className }: { children: React.ReactNode; className: string }) => {
-      return <div className={className || ''}>{children}</div>
-    }
-  )
+  
 
   const onSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
     // setState(arrayMoveImmutable(state, oldIndex, newIndex))
