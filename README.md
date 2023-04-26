@@ -9,3 +9,4 @@ Utilized Express and MongoDB on the backend for efficient data management and st
 
 To see the backend go to https://github.com/siddhant-deshmukh/GoogleFormClone-api-docker
 
+![Alt Text](./features.gif)
