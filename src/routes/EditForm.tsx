@@ -1,6 +1,6 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { Reducer, ReducerAction, RefObject, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
-import { IAllFormQuestions, IForm, IUser } from '../types';
+import { IUser } from '../types';
 import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import FormEditor from '../components/FormEditor/index';
@@ -34,13 +34,13 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
   }, [formId])
 
 
-  useEffect(()=>{
-    let timeoutID : NodeJS.Timeout | null = null;
-    function EventFun(event : Event){
+  useEffect(() => {
+    let timeoutID: NodeJS.Timeout | null = null;
+    function EventFun(event: Event) {
       // console.log("The div is scrolled",event.target.scrollTop);
-      if(timeoutID) clearTimeout(timeoutID);
-      timeoutID = setTimeout(()=>{
-        let curr_pos =   selectQuestionRef.current?.offsetTop    // document.documentElement.style.getPropertyValue("--side-btn-height")
+      if (timeoutID) clearTimeout(timeoutID);
+      timeoutID = setTimeout(() => {
+        let curr_pos = selectQuestionRef.current?.offsetTop    // document.documentElement.style.getPropertyValue("--side-btn-height")
         //@ts-ignore
         let window_pos = event.target.scrollTop
         //@ts-ignore
@@ -57,8 +57,8 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
             document.documentElement.style.setProperty("--side-btn-height",(curr_pos).toString()+"px")
             // console.log('\nset 3',     (curr_pos).toString()+"px"  ,'\n')
           }
-        }else{
-          document.documentElement.style.setProperty("--side-btn-height",(window_pos + 30).toString()+"px")
+        } else {
+          document.documentElement.style.setProperty("--side-btn-height", (window_pos + 30).toString() + "px")
         }
         // console.log('curr_pos',curr_pos, '\nwindow_pos' ,window_pos, '\nview_window_height : ',view_window_height,'\n',  document.documentElement.style.getPropertyValue("--side-btn-height"))
         
@@ -69,7 +69,7 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
     const scrollableDiv = document.querySelector("#scrolling-paper");
     scrollableDiv?.addEventListener("scroll", EventFun);
 
-    return ()=>{
+    return () => {
       scrollableDiv?.removeEventListener('scroll', EventFun)
     }
   },[])
@@ -79,6 +79,7 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
       <div className='fixed top-0 left-0 z-20 w-full bg-white hidden sm:block'>
         <NavBar currentState={currentState} setCurrentState={setCurrentState} userInfo={userInfo} />
       </div>
+
       {
          errMsg !== '' && <div className='absolute w-full block top-24 z-30'>
           <div className='px-4  top-0 w-full py-1 shadow-md border mb-4 z-30  max-w-md mx-auto flex items-center justify-between bg-red-100 dark:bg-gray-800'>
@@ -171,7 +172,6 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
     </div>
   )
 }
-
 
 
 export default EditForm
