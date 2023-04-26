@@ -115,7 +115,7 @@ function SubmitForm() {
     <div className="flex flex-col w-screen h-screen bg-purple-100" style={{ minWidth: '352px' }}>
       <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
         <div className='w-full h-full '>
-          <TitleDescFormElement aboutForm={aboutForm} />
+          <TitleDescFormElement />
           <div
             id='sortable'
             className='flex flex-col  my-3 space-y-2 w-full '

@@ -6,13 +6,14 @@ import NavBar from '../components/NavBar';
 import FormEditor from '../components/FormEditor/index';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { setErrMsg, setSucessMsg } from '../features/msgs/msgSlice';
+import FormPreview from '../components/FormPreview';
+import Res from '../components/FormEditor/response/Res';
 
 
 function EditForm({ userInfo }: { userInfo?: IUser }) {
 
   const { formId } = useParams()
 
-  const queSeq = useAppSelector((state)=> state.form.queSeq)
   const allQuestions = useAppSelector((state)=> state.form.allQuestions)
   const selectedKey = useAppSelector((state)=> state.form.selectedKey)
 
@@ -98,11 +99,12 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
           </div>
         </div>
       }
+
       <div 
         id="scrolling-paper"
         className='w-full relative pt-24 sm:pt-20 justify-center  h-full overflow-y-auto'
-        
         >
+          
         <div className='fixed top-0 left-0 z-20 w-full block bg-white sm:hidden'>
           <NavBar />
           <div className='flex space-x-3 mx-auto w-fit h-fit text-sm '>
@@ -155,17 +157,16 @@ function EditForm({ userInfo }: { userInfo?: IUser }) {
         }
 
 
-        {/* {
+        {
           currentState === 'Preview' && <main className={` flex space-x-2 w-full ${(currentState === 'Preview') ? 'block' : 'hidden'}`}>
-            <FormPreview
-              formId={formId}  />
+            <FormPreview formId={formId}  />
           </main>
-        } */}
+        }
 
-        {/* {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
+        {currentState === 'Res' && <main className={`flex space-x-2 w-full`}>
           <Res formId={formId}  />
         </main>
-        } */}
+        }
       </div>
     </div>
   )

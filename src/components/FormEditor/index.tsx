@@ -43,9 +43,6 @@ function FormEditor(
           }}>
           Submit
         </button>
-        {
-          JSON.stringify(queSeq)
-        }
       </div>
 
       {/* Side Button to add new question */}

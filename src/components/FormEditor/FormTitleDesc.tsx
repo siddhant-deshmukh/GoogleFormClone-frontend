@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setAboutForm } from '../../features/form/formSlice'
 
-const FormTitleDesc = () => {
+const FormTitleDesc = ({readOnly}:{readOnly?: boolean}) => {
 
   const aboutForm = useAppSelector((state)=> state.form.aboutForm)
   const dispatch = useAppDispatch()
 
   const [titleErr, setTitleErr] = useState<boolean>(aboutForm.title.length > 150 || aboutForm.title.length < 3)
   return (
-    <div className='flex flex-col space-y-3 w-full  pt-2 pb-4 px-3 bg-white border-t-8 border-t-purple-800 border-l-4 rounded-lg border-blue-500'>
+    <div className='flex flex-col space-y-3 w-full  pt-2 pb-4 px-3 bg-white border-t-8 border-t-purple-800 rounded-lg '>
       {
         titleErr &&
         <div className='flex text-xs text-red-800 items-center pt-1'>
@@ -24,6 +24,7 @@ const FormTitleDesc = () => {
         style={{ fontWeight: '500px' }}
         value={aboutForm?.title || ''}
         placeholder='Untitle Form'
+        disabled={(readOnly)?true:false}
         onChange={(event) => {
           event.preventDefault();
           // console.log(event.target.value.length,event.target.value.length > 3 || event.target.value.length <10)
@@ -35,6 +36,7 @@ const FormTitleDesc = () => {
       <input
         onFocus={(event) => { event.target.select() }}
         value={aboutForm?.desc || ''}
+        disabled={(readOnly)?true:false}
         placeholder='Form Description'
         className='text-xs border-b-2 border-gray-200  outline-none focus:outline-none focus:ease-in focus:duration-300 focus:border-purple-900 py-1 '
         onChange={(event) => { 

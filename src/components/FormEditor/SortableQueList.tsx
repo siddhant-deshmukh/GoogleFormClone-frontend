@@ -1,7 +1,7 @@
 import { useAppDispatch } from "../../app/hooks"
 import { functionForSorting } from "../../features/form/formSlice"
 import { IAllFormQuestions } from "../../types"
-import QuestionFormElement from "./edit-question/QuestionFormElement"
+import QuestionFormElement from "./edit-question"
 import { DndItem, DndList } from "./react-sortable-hoc"
 
 const SortableQueList = ({ queSeq, allQuestions, selectedKey, selectQuestionRef }: {

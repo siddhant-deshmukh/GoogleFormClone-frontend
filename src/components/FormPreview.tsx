@@ -3,20 +3,24 @@ import  { useCallback,  useMemo, useState } from 'react'
 import { IAllFormQuestions, IQueResList } from '../types'
 import QuestionElement from './FormEditor/question/QuestionElement'
 import TitleDescFormElement from './FormEditor/FormTitleDesc'
+import { useAppSelector } from '../app/hooks'
 
 const defalutQueResList = new Map()
 
 function FormPreview(
-  { aboutForm, formId, queSeq, allQuestions }: {
-    aboutForm: { title: string, desc: string },
+  {  formId }: {
     formId: string | undefined,
-    queSeq: (string | Types.ObjectId)[],
-    allQuestions: IAllFormQuestions | null,
   }
 ) {
   const [quesReses, setQueReses] = useState<IQueResList>(defalutQueResList)
   const [submitError, setSubmitError] = useState<string>('')
   const [submitMsg, setSubmitMsg] = useState<string>('')
+
+
+  const allQuestions = useAppSelector((state)=> state.form.allQuestions)
+  const queSeq = useAppSelector((state)=> state.form.queSeq)
+  const aboutForm = useAppSelector((state)=> state.form.aboutForm)
+
 
   const changeRes = (queKey: string, response: string[] | string) => {
 
@@ -38,7 +42,7 @@ function FormPreview(
         (ans_type === "dropdown" || ans_type === "checkbox" || ans_type === "mcq") ? [] : ""
       )
     })
-    console.log({new_queResList})
+    // console.log({new_queResList})
     setQueReses(new_queResList)
   }, [allQuestions])
 
@@ -97,19 +101,15 @@ function FormPreview(
   return (
     <div className='relative px-2 my-2 flex  space-x-2 pr-3 w-full max-w-3xl  mx-auto  '>
       <div className='w-full h-full '>
-        
-        {/* <hr/>
-        {
-          JSON.stringify(quesReses)
-        }
-        <hr/> */}
-        <TitleDescFormElement />
+        <TitleDescFormElement readOnly={true}/>
         <div
           id='sortable'
           className='flex flex-col  my-3 space-y-2 w-full '
         >
-          {allQuestions && queSeq &&
-            queSeq.map((queKey) => {
+          {
+            allQuestions && queSeq &&
+            queSeq.map((ele) => {
+              let queKey = ele.id
               let question = allQuestions[queKey.toString()]
               let queRes = quesReses.get(queKey.toString())
               if (!queKey) return;

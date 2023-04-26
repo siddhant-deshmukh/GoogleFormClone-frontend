@@ -1,10 +1,14 @@
 import React from 'react'
+import { useAppSelector } from '../../../app/hooks'
 import { IAllFormQuestions } from '../../../types'
 import ResSummery from './ResSummery'
 
 const Res = (
-  {formId,allQuestions}:{formId: string | undefined, allQuestions: IAllFormQuestions | null}
+  {formId}:{formId: string | undefined }
 ) => {
+
+  const allQuestions = useAppSelector((state)=> state.form.allQuestions)
+  
   if(!formId){
     return(
       <div className='relative  my-2 flex space-x-2  w-full max-w-3xl  mx-auto bg-white   py-10 px-5'>
